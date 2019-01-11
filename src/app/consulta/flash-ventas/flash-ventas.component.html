@@ -17,8 +17,7 @@
                   <pg-option
                     *ngFor="let option of optionsFechas"
                     [Label]="option.label"
-                    [Value]="option"
-                    [Disabled]="option.disabled">
+                    [Value]="option">
                   </pg-option>
                 </pg-select>
               </div>
@@ -101,8 +100,7 @@
                   <pg-option
                     *ngFor="let option of optionsMarcas"
                     [Label]="option.label"
-                    [Value]="option"
-                    [Disabled]="option.disabled">
+                    [Value]="option">
                   </pg-option>
                 </pg-select>
               </div>
@@ -116,8 +114,7 @@
                   <pg-option
                     *ngFor="let option of optionsINCDEC"
                     [Label]="option.label"
-                    [Value]="option"
-                    [Disabled]="option.disabled">
+                    [Value]="option">
                   </pg-option>
                 </pg-select>
               </div>
@@ -142,7 +139,7 @@
       <!-- <div class="clearfix"></div> -->
     </div>
     <div class="card-body">
-      <div class="table-responsive" style="height:600px;overflow-y: hidden">
+      <div class="table-responsive" style="height:500px;overflow-y: hidden">
         <ngx-datatable #tableAdvance class='table table-hover table-stripped'
                        [columns]="advanceColumns"
                        [columnMode]="columnModeSetting"
