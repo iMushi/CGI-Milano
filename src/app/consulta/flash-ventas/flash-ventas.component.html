@@ -1,0 +1,54 @@
+<pg-container>
+  <!-- START card -->
+  <div class="card card-default">
+    <div class="card-header ">
+      <div class="card-title">Filtros de B&uacute;squeda</div>
+    </div>
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-4">
+          <h5>Periodo</h5>
+          <div class="form-group ">
+            <pg-select style="width: 100%;" [(ngModel)]="selectedPeriodo" [PlaceHolder]="'Selecciona Periodo'" AllowClear ShowSearch>
+              <pg-option
+                *ngFor="let option of options"
+                [Label]="option.label"
+                [Value]="option"
+                [Disabled]="option.disabled">
+              </pg-option>
+            </pg-select>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <h5>Rango de Fechas</h5>
+          <div class="form-group ">
+            <div class="form-row">
+              <div class="col-md-6">
+                <div class="input-group date">
+                  <pg-datepicker (ngModelChange)="_startDate=$event;_startValueChange()" Placeholder="Start Date" [ngModel]="_startDate"
+                                 [DisabledDate]="_disabledStartDate" [Format]="'YYYY-MM-DD'"></pg-datepicker>
+                  <div class="input-group-append">
+                        <span class="input-group-text">
+                          <i class="fa fa-calendar"></i>
+                        </span>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="input-group date sm-m-t-10">
+                  <pg-datepicker (ngModelChange)="_endDate=$event;_endValueChange()" Placeholder="End Date" [ngModel]="_endDate" [DisabledDate]="_disabledEndDate"
+                                 [Format]="'YYYY-MM-DD'"></pg-datepicker>
+                  <div class="input-group-append">
+                        <span class="input-group-text">
+                          <i class="fa fa-calendar"></i>
+                        </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</pg-container>

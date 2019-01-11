@@ -4,12 +4,12 @@ import { RootLayout } from '../root/root.component';
 declare var pg: any;
 
 @Component({
-    selector: 'casual-layout',
-    templateUrl: './casual.component.html',
-    styleUrls: ['./casual.component.scss'],
+    selector: 'app-consulta-component',
+    templateUrl: './consulta.component.html',
+    styleUrls: ['./consulta.component.scss'],
     encapsulation: ViewEncapsulation.None
 })
-export class CasualLayout extends RootLayout implements OnInit {
+export class ConsultaComponent extends RootLayout implements OnInit {
     menuItems = [
         {
             label: 'Dashboard',

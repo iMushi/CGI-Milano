@@ -6,10 +6,17 @@
 @import "var";
 
 //Layout Overrides
-app-root, casual-layout{
+app-root, casual-layout, app-consulta-component{
   height: 100%;
 }
 casual-layout{
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+}
+app-consulta-component{
   display: flex;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
