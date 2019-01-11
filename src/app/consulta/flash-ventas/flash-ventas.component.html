@@ -20,12 +20,13 @@
           </div>
         </div>
         <div class="col-md-4">
-          <h5>Rango de Fechas</h5>
+          <h5>Periodo</h5>
           <div class="form-group ">
             <div class="form-row">
               <div class="col-md-6">
                 <div class="input-group date">
-                  <pg-datepicker (ngModelChange)="_startDate=$event;_startValueChange()" Placeholder="Start Date" [ngModel]="_startDate"
+                  <pg-datepicker (ngModelChange)="_startDate=$event;_startValueChange()"
+                                 Placeholder="De" [ngModel]="_startDate"
                                  [DisabledDate]="_disabledStartDate" [Format]="'YYYY-MM-DD'"></pg-datepicker>
                   <div class="input-group-append">
                         <span class="input-group-text">
@@ -36,7 +37,8 @@
               </div>
               <div class="col-md-6">
                 <div class="input-group date sm-m-t-10">
-                  <pg-datepicker (ngModelChange)="_endDate=$event;_endValueChange()" Placeholder="End Date" [ngModel]="_endDate" [DisabledDate]="_disabledEndDate"
+                  <pg-datepicker (ngModelChange)="_endDate=$event;_endValueChange()"
+                                 Placeholder="Al" [ngModel]="_endDate" [DisabledDate]="_disabledEndDate"
                                  [Format]="'YYYY-MM-DD'"></pg-datepicker>
                   <div class="input-group-append">
                         <span class="input-group-text">
@@ -48,6 +50,35 @@
             </div>
           </div>
         </div>
+
+        <div class="col-md-4">
+          <div class="row">
+
+            <div class="col-md-6 col-sm-6">
+              <div class="checkbox  check-danger checkbox-circle">
+                <input type="checkbox" checked="checked" value="0" id="checkbox7">
+                <label for="checkbox7">Por Estado</label>
+              </div>
+              <div class="checkbox check-danger checkbox-circle">
+                <input type="checkbox" value="1" id="checkbox8">
+                <label for="checkbox8">Por D&iacute;</label>
+              </div>
+              <div class="checkbox check-danger checkbox-circle">
+                <input type="checkbox" checked="checked" value="0" id="checkbox9">
+                <label for="checkbox9">Por Mes</label>
+              </div>
+            </div>
+
+            <div class="col-md-6 col-sm-6">
+              <div class="checkbox  check-danger">
+                <input type="checkbox" checked="checked" value="0" id="checkbox10">
+                <label for="checkbox10">Margen</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
       </div>
     </div>
   </div>
