@@ -1,113 +1,136 @@
 <div style="overflow: hidden">
-<pg-container extraHorizontalClass="bg-white p-l-0 p-r-0" extraClass="bg-white sm-p-l-0 sm-p-r-0">
-  <!-- START card -->
-  <div class="inner" pg-parallax>
+  <pg-container extraHorizontalClass="bg-white p-l-0 p-r-0" extraClass="bg-white sm-p-l-0 sm-p-r-0">
+    <!-- START card -->
+    <div class="inner" pg-parallax>
 
-    <div class="card card-default">
-      <div class="card-header ">
-        <div class="card-title">Filtros de B&uacute;squeda</div>
-      </div>
-      <div class="card-body">
-        <div class="row">
-          <div class="col-md-4">
-            <h5>Periodo</h5>
-            <div class="form-group ">
-              <pg-select style="width: 100%;" [(ngModel)]="selectedPeriodo" [PlaceHolder]="'Selecciona Periodo'" AllowClear ShowSearch>
-                <pg-option
-                  *ngFor="let option of optionsFechas"
-                  [Label]="option.label"
-                  [Value]="option"
-                  [Disabled]="option.disabled">
-                </pg-option>
-              </pg-select>
+      <div class="card card-default">
+        <div class="card-header ">
+          <div class="card-title">Filtros de B&uacute;squeda</div>
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-md-4">
+              <label>&nbsp;</label>
+              <div class="form-group form-group-default form-group-default-select2">
+                <label class="">Mes</label>
+                <pg-select style="width: 100%;" [(ngModel)]="selectedPeriodo" [PlaceHolder]="'Selecciona Mes'" AllowClear ShowSearch>
+                  <pg-option
+                    *ngFor="let option of optionsFechas"
+                    [Label]="option.label"
+                    [Value]="option"
+                    [Disabled]="option.disabled">
+                  </pg-option>
+                </pg-select>
+              </div>
             </div>
-          </div>
-          <div class="col-md-4">
-            <h5>Periodo</h5>
-            <div class="form-group ">
-              <div class="form-row">
-                <div class="col-md-6">
-                  <div class="input-group date">
-                    <pg-datepicker (ngModelChange)="_startDate=$event;_startValueChange()"
-                                   Placeholder="De" [ngModel]="_startDate"
-                                   [DisabledDate]="_disabledStartDate" [Format]="'YYYY-MM-DD'"></pg-datepicker>
+            <div class="col-md-4">
+              <label>Periodo</label>
+              <div class="form-group ">
+                <div class="form-row">
+                  <div class="form-group form-group-default input-group col-md-6">
+                    <div class="form-input-group">
+                      <label class="">De:</label>
+                      <pg-datepicker (ngModelChange)="_startDate=$event;_startValueChange()"
+                                     Placeholder="Seleccione fecha"
+                                     [ngModel]="_startDate"
+                                     [DisabledDate]="_disabledStartDate" [Format]="'DD-MM-YYYY'"></pg-datepicker>
+                    </div>
                     <div class="input-group-append">
                         <span class="input-group-text">
                           <i class="fa fa-calendar"></i>
                         </span>
                     </div>
                   </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="input-group date sm-m-t-10">
-                    <pg-datepicker (ngModelChange)="_endDate=$event;_endValueChange()"
-                                   Placeholder="Al" [ngModel]="_endDate" [DisabledDate]="_disabledEndDate"
-                                   [Format]="'YYYY-MM-DD'"></pg-datepicker>
+
+
+                  <div class="form-group form-group-default input-group col-md-6">
+                    <div class="form-input-group">
+                      <label class="">A:</label>
+                      <pg-datepicker (ngModelChange)="_endDate=$event;_endValueChange()"
+                                     Placeholder="Seleccione fecha"
+                                     [ngModel]="_endDate" [DisabledDate]="_disabledEndDate"
+                                     [Format]="'DD-MM-YYYY'"></pg-datepicker>
+                    </div>
                     <div class="input-group-append">
                         <span class="input-group-text">
                           <i class="fa fa-calendar"></i>
                         </span>
                     </div>
                   </div>
+
+
                 </div>
               </div>
             </div>
+
+            <div class="col-md-4">
+              <div class="row">
+
+                <div class="col-md-6 col-sm-6">
+                  <div class="checkbox  check-danger checkbox-circle">
+                    <input type="checkbox" checked="" value="0" id="checkbox7">
+                    <label for="checkbox7">Por Estado</label>
+                  </div>
+                  <div class="checkbox check-danger checkbox-circle">
+                    <input type="checkbox" value="1" id="checkbox8">
+                    <label for="checkbox8">Por D&iacute;</label>
+                  </div>
+                  <div class="checkbox check-danger checkbox-circle">
+                    <input type="checkbox" checked="checked" value="2" id="checkbox9">
+                    <label for="checkbox9">Por Mes</label>
+                  </div>
+                </div>
+
+                <div class="col-md-6 col-sm-6">
+                  <div class="checkbox  check-danger">
+                    <input type="checkbox" value="3" id="checkbox10">
+                    <label for="checkbox10">Margen</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
-          <div class="col-md-4">
-            <div class="row">
+          <div class="row">
 
-              <div class="col-md-6 col-sm-6">
-                <div class="checkbox  check-danger checkbox-circle">
-                  <input type="checkbox" checked="checked" value="0" id="checkbox7">
-                  <label for="checkbox7">Por Estado</label>
-                </div>
-                <div class="checkbox check-danger checkbox-circle">
-                  <input type="checkbox" value="1" id="checkbox8">
-                  <label for="checkbox8">Por D&iacute;</label>
-                </div>
-                <div class="checkbox check-danger checkbox-circle">
-                  <input type="checkbox" checked="checked" value="0" id="checkbox9">
-                  <label for="checkbox9">Por Mes</label>
-                </div>
-              </div>
-
-              <div class="col-md-6 col-sm-6">
-                <div class="checkbox  check-danger">
-                  <input type="checkbox" checked="checked" value="0" id="checkbox10">
-                  <label for="checkbox10">Margen</label>
-                </div>
+            <div class="col-md-4">
+              <div class="form-group form-group-default form-group-default-select2">
+                <label class="">Marca</label>
+                <pg-select style="width: 100%;" [(ngModel)]="selectedMarca" [PlaceHolder]="'Selecciona Marca'" AllowClear ShowSearch>
+                  <pg-option
+                    *ngFor="let option of optionsMarcas"
+                    [Label]="option.label"
+                    [Value]="option"
+                    [Disabled]="option.disabled">
+                  </pg-option>
+                </pg-select>
               </div>
             </div>
+
+
+            <div class="col-md-4">
+              <div class="form-group form-group-default form-group-default-select2">
+                <label class="">INC/DEC Por:</label>
+                <pg-select style="width: 100%;" [(ngModel)]="selectedMarca" [PlaceHolder]="'Selecciona'" AllowClear ShowSearch>
+                  <pg-option
+                    *ngFor="let option of optionsINCDEC"
+                    [Label]="option.label"
+                    [Value]="option"
+                    [Disabled]="option.disabled">
+                  </pg-option>
+                </pg-select>
+              </div>
+            </div>
+
           </div>
 
 
         </div>
-
-
-        <div class="row">
-
-          <div class="col-md-4">
-            <h5>Marcas</h5>
-            <div class="form-group ">
-              <pg-select style="width: 100%;" [(ngModel)]="selectedMarca" [PlaceHolder]="'Selecciona Marca'" AllowClear ShowSearch>
-                <pg-option
-                  *ngFor="let option of optionsMarcas"
-                  [Label]="option.label"
-                  [Value]="option"
-                  [Disabled]="option.disabled">
-                </pg-option>
-              </pg-select>
-            </div>
-          </div>
-        </div>
-
-
       </div>
     </div>
-  </div>
 
-</pg-container>
+  </pg-container>
 
 </div>
 <pg-container extraHorizontalClass="bg-white" extraClass="bg-white">

@@ -20,8 +20,21 @@ export class FlashVentasComponent implements OnInit {
     {value: '4', label: 'HOME & FASHION'}
   ];
 
+
+  optionsINCDEC = [
+    {value: 'vsVenta1', label: 'Venta +'},
+    {value: 'vsVenta2', label: 'Venta -'},
+    {value: 'vsCuota1', label: 'Cuota +'},
+    {value: 'vsCuota2', label: 'Cuota -'},
+    {value: 'vsMix1', label: 'Venta/Cuota +'},
+    {value: 'vsMix2', label: 'Venta/Cuota -'},
+    {value: 'vsUBruta1', label: 'Utilidad Bruta +'},
+    {value: 'vsUBruta2', label: 'Utilidad Bruta -'}
+  ];
+
   selectedPeriodo;
   selectedMarca;
+  selectedINCDEC;
 
   // Rango de fechas
   _startDate = null;
@@ -62,25 +75,27 @@ export class FlashVentasComponent implements OnInit {
     if (this._startDate > this._endDate) {
       this._endDate = null;
     }
-  };
+  }
+
   _endValueChange = () => {
     if (this._startDate > this._endDate) {
       this._startDate = null;
     }
-  };
+  }
 
   _disabledStartDate = (startValue) => {
     if (!startValue || !this._endDate) {
       return false;
     }
     return startValue.getTime() >= this._endDate.getTime();
-  };
+  }
+
   _disabledEndDate = (endValue) => {
     if (!endValue || !this._startDate) {
       return false;
     }
     return endValue.getTime() <= this._startDate.getTime();
-  };
+  }
 
 
   fetchSampleAdvance(cb) {

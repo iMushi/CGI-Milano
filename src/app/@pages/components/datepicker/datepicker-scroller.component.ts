@@ -36,7 +36,7 @@ import { pgDatePickerComponent } from './datepicker.component'
                 </a>
             </ng-template>
         </ng-container>
-        </div>             
+        </div>
     </div>
 </div>
   `,
@@ -68,7 +68,7 @@ export class pgDateScroller  implements OnInit{
         else{
             for (let i = 0; i < 10; i++) {
                 this._yearList.push(i);
-              } 
+              }
             this._List = this._yearList;
         }
 
@@ -103,10 +103,10 @@ export class pgDateScroller  implements OnInit{
     _changeMonthView(){
         this.picker._changeMonthView();
     }
-    _changeMonth(value:any){    
+    _changeMonth(value:any){
         if(this._selectedMonth > value){
             this.picker._showMonth = this.picker._showMonth - (this._selectedMonth - value)
-            
+
         }
         else{
             this.picker._showMonth = this.picker._showMonth + (value - this._selectedMonth)
