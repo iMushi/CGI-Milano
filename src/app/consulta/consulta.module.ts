@@ -7,6 +7,7 @@ import { RouterModule } from '@angular/router';
 import { ConsultaRoutes } from './consulta.routing';
 import { pgSelectModule } from '../@pages/components/select/select.module';
 import { pgDatePickerModule } from '../@pages/components/datepicker/datepicker.module';
+import { NgxDatatableModule } from '@swimlane/ngx-datatable';
 
 @NgModule({
   imports: [
@@ -16,7 +17,8 @@ import { pgDatePickerModule } from '../@pages/components/datepicker/datepicker.m
     FormsModule,
     ReactiveFormsModule,
     pgSelectModule,
-    pgDatePickerModule
+    pgDatePickerModule,
+    NgxDatatableModule
   ],
   declarations: [FlashVentasComponent]
 })
