@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { SOAPService } from 'ngx-soap';
+import { pgDatePickerComponent } from '../../@pages/components/datepicker/datepicker.component';
 
 @Component({
   selector: 'app-flash-ventas',
@@ -42,6 +43,8 @@ export class FlashVentasComponent implements OnInit {
   _startDate = null;
   _endDate = null;
 
+  fechaDeInstance: pgDatePickerComponent;
+  fechaAInstance: pgDatePickerComponent;
 
   // datos tabla dummy
 

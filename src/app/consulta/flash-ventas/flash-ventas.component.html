@@ -32,9 +32,12 @@
                       <pg-datepicker (ngModelChange)="_startDate=$event;_startValueChange()"
                                      Placeholder="Seleccione fecha"
                                      [ngModel]="_startDate"
-                                     [DisabledDate]="_disabledStartDate" [Format]="'DD/MM/YYYY'"></pg-datepicker>
+                                     [DisabledDate]="_disabledStartDate" [Format]="'DD/MM/YYYY'"
+                                      (datePickerInstance)= 'fechaDeInstance = $event'
+
+                      ></pg-datepicker>
                     </div>
-                    <div class="input-group-append">
+                    <div class="input-group-append" (click)="fechaDeInstance._openCalendar()">
                         <span class="input-group-text">
                           <i class="fa fa-calendar"></i>
                         </span>
@@ -48,9 +51,11 @@
                       <pg-datepicker (ngModelChange)="_endDate=$event;_endValueChange()"
                                      Placeholder="Seleccione fecha"
                                      [ngModel]="_endDate" [DisabledDate]="_disabledEndDate"
-                                     [Format]="'DD/MM/YYYY'"></pg-datepicker>
+                                     [Format]="'DD/MM/YYYY'"
+                                     (datePickerInstance)= 'fechaAInstance = $event'
+                      ></pg-datepicker>
                     </div>
-                    <div class="input-group-append">
+                    <div class="input-group-append" (click)="fechaAInstance._openCalendar()">
                         <span class="input-group-text">
                           <i class="fa fa-calendar"></i>
                         </span>

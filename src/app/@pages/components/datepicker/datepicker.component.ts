@@ -9,7 +9,7 @@ import {
   ViewChild,
   ViewEncapsulation,
   Renderer2,
-  NgZone
+  NgZone, EventEmitter, Output
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import * as moment from 'moment';
@@ -68,6 +68,8 @@ export class pgDatePickerComponent implements ControlValueAccessor, OnInit {
   // ngModel Access
   onChange: (value: Date) => void = () => null;
   onTouched: () => void = () => null;
+
+  @Output() datePickerInstance: EventEmitter<pgDatePickerComponent> = new EventEmitter();
 
   @Input() Format = 'YYYY-MM-DD';
   @Input() Size = '';
@@ -307,7 +309,8 @@ export class pgDatePickerComponent implements ControlValueAccessor, OnInit {
 
   ngOnInit(): void {
     this._generateYearPanel();
-    
+
+    this.datePickerInstance.emit(this);
   }
 
   writeValue(value: Date): void {
