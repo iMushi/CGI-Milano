@@ -4,7 +4,6 @@ import { BrowserModule, HAMMER_GESTURE_CONFIG, HammerGestureConfig } from '@angu
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 //Routing
@@ -81,6 +80,7 @@ import { ExecutiveDashboardComponent } from './dashboard/executive/dashboard.com
 import { BlankCorporateComponent } from './@pages/layouts/blank-corporate/blank-corporate.component';
 import { BlankSimplywhiteComponent } from './@pages/layouts/blank-simplywhite/blank-simplywhite.component';
 import { BlankCasualComponent } from './@pages/layouts/blank-casual/blank-casual.component';
+import { NgxSoapModule } from 'ngx-soap';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     suppressScrollX: true
@@ -127,7 +127,6 @@ export class AppHammerConfig extends HammerGestureConfig {
         BrowserAnimationsModule,
         CommonModule,
         FormsModule,
-        HttpModule,
         HttpClientModule,
         SharedModule,
         ProgressModule,
@@ -153,7 +152,8 @@ export class AppHammerConfig extends HammerGestureConfig {
         QuillModule,
         PerfectScrollbarModule,
         pgSwitchModule,
-        DashboardModule
+        DashboardModule,
+        NgxSoapModule
     ],
     providers: [QuickviewService, pagesToggleService, ChartService, SocialService, {
         provide: PERFECT_SCROLLBAR_CONFIG,

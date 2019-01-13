@@ -1,4 +1,6 @@
 import { Component, OnInit } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { SOAPService } from 'ngx-soap';
 
 @Component({
   selector: 'app-flash-ventas',
@@ -57,12 +59,13 @@ export class FlashVentasComponent implements OnInit {
 
 // datos tabla dummy
 
-  constructor() {
+  constructor(private http: HttpClient, private soap: SOAPService) {
 
     this.fetchSampleAdvance((data) => {
       // push our inital complete list
       this.advanceRows = data;
     });
+
 
   }
 

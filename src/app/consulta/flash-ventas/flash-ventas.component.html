@@ -32,7 +32,7 @@
                       <pg-datepicker (ngModelChange)="_startDate=$event;_startValueChange()"
                                      Placeholder="Seleccione fecha"
                                      [ngModel]="_startDate"
-                                     [DisabledDate]="_disabledStartDate" [Format]="'DD-MM-YYYY'"></pg-datepicker>
+                                     [DisabledDate]="_disabledStartDate" [Format]="'DD/MM/YYYY'"></pg-datepicker>
                     </div>
                     <div class="input-group-append">
                         <span class="input-group-text">
@@ -48,7 +48,7 @@
                       <pg-datepicker (ngModelChange)="_endDate=$event;_endValueChange()"
                                      Placeholder="Seleccione fecha"
                                      [ngModel]="_endDate" [DisabledDate]="_disabledEndDate"
-                                     [Format]="'DD-MM-YYYY'"></pg-datepicker>
+                                     [Format]="'DD/MM/YYYY'"></pg-datepicker>
                     </div>
                     <div class="input-group-append">
                         <span class="input-group-text">
@@ -67,7 +67,7 @@
 
                 <div class="col-md-6 col-sm-6">
                   <div class="checkbox  check-danger checkbox-circle">
-                    <input type="checkbox" checked="" value="0" id="checkbox7">
+                    <input type="checkbox"  value="0" id="checkbox7">
                     <label for="checkbox7">Por Estado</label>
                   </div>
                   <div class="checkbox check-danger checkbox-circle">
@@ -75,7 +75,7 @@
                     <label for="checkbox8">Por D&iacute;</label>
                   </div>
                   <div class="checkbox check-danger checkbox-circle">
-                    <input type="checkbox" checked="checked" value="2" id="checkbox9">
+                    <input type="checkbox"  value="2" id="checkbox9">
                     <label for="checkbox9">Por Mes</label>
                   </div>
                 </div>
@@ -127,6 +127,10 @@
       </div>
     </div>
 
+    <div class="row">
+      &nbsp;
+    </div>
+
   </pg-container>
 
 </div>
@@ -139,7 +143,7 @@
       <!-- <div class="clearfix"></div> -->
     </div>
     <div class="card-body">
-      <div class="table-responsive" style="height:500px;overflow-y: hidden">
+      <div class="table-responsive" style="height:450px;overflow-y: hidden">
         <ngx-datatable #tableAdvance class='table table-hover table-stripped'
                        [columns]="advanceColumns"
                        [columnMode]="columnModeSetting"

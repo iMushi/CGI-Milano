@@ -109,7 +109,6 @@ $assets-url: "../../assets" !global;
 @import 'themes/modern/_custom.scss';
 
 
-
 @media (max-width: 979px) {
   .headerCustom {
     background: url('../../assets/images/top.png') repeat-y top left;
@@ -121,5 +120,12 @@ $assets-url: "../../assets" !global;
   .headerCustom {
     background: url('../../assets/images/top.png') repeat-y top left;
     background-size: contain;
+  }
+}
+
+
+@media (min-width: 576px) {
+  .container {
+    max-width: 95%;
   }
 }
