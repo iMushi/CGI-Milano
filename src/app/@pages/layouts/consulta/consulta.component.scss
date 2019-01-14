@@ -129,3 +129,42 @@ $assets-url: "../../assets" !global;
     max-width: 95%;
   }
 }
+
+
+
+.headerPurple{
+  background-color: #7967B2;
+  color: white !important;
+}
+
+
+.headerYellow{
+  background-color: #F1C15F;
+  color: white !important;
+}
+
+.headerGreen {
+  background-color: #B2D273;
+  color: white !important;
+}
+
+.headerTerracota {
+  background-color: #BD5758;
+  color: white !important;
+}
+
+.headerNormal {
+  position: relative;
+  top: 10px;
+}
+
+.ngx-datatable .datatable-header .datatable-header-cell.sortable .sort-btn{
+  top: 10px !important;
+}
+
+.headerSuperior{
+  z-index: 9999;
+  position: fixed;
+  top: 3px;
+  text-align: center;
+}

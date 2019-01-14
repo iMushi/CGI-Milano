@@ -33,7 +33,7 @@
                                      Placeholder="Seleccione fecha"
                                      [ngModel]="_startDate"
                                      [DisabledDate]="_disabledStartDate" [Format]="'DD/MM/YYYY'"
-                                      (datePickerInstance)= 'fechaDeInstance = $event'
+                                     (datePickerInstance)='fechaDeInstance = $event'
 
                       ></pg-datepicker>
                     </div>
@@ -52,7 +52,7 @@
                                      Placeholder="Seleccione fecha"
                                      [ngModel]="_endDate" [DisabledDate]="_disabledEndDate"
                                      [Format]="'DD/MM/YYYY'"
-                                     (datePickerInstance)= 'fechaAInstance = $event'
+                                     (datePickerInstance)='fechaAInstance = $event'
                       ></pg-datepicker>
                     </div>
                     <div class="input-group-append" (click)="fechaAInstance._openCalendar()">
@@ -72,7 +72,7 @@
 
                 <div class="col-md-6 col-sm-6">
                   <div class="checkbox  check-danger checkbox-circle">
-                    <input type="checkbox"  value="0" id="checkbox7">
+                    <input type="checkbox" value="0" id="checkbox7">
                     <label for="checkbox7">Por Estado</label>
                   </div>
                   <div class="checkbox check-danger checkbox-circle">
@@ -80,7 +80,7 @@
                     <label for="checkbox8">Por D&iacute;</label>
                   </div>
                   <div class="checkbox check-danger checkbox-circle">
-                    <input type="checkbox"  value="2" id="checkbox9">
+                    <input type="checkbox" value="2" id="checkbox9">
                     <label for="checkbox9">Por Mes</label>
                   </div>
                 </div>
@@ -139,6 +139,30 @@
   </pg-container>
 
 </div>
+
+<!--
+
+Encabezado doble
+
+
+    z-index: 9999;
+    position: fixed;
+    top: 3px
+    width: 200px
+    text-align: center
+-->
+
+
+<!-- cabecera normal
+
+    background-color: red;
+    width: 200px;
+    position: relative;
+    top: 20px;
+
+-->
+
+
 <pg-container extraHorizontalClass="bg-white" extraClass="bg-white">
   <!-- START card -->
   <div class="card card-transparent">
@@ -150,8 +174,6 @@
     <div class="card-body">
       <div class="table-responsive" style="height:450px;overflow-y: hidden">
         <ngx-datatable #tableAdvance class='table table-hover table-stripped'
-                       [columns]="advanceColumns"
-                       [columnMode]="columnModeSetting"
                        [scrollbarH]="scrollBarHorizontal"
                        [headerHeight]="50"
                        [footerHeight]="50"
@@ -159,6 +181,251 @@
                        [limit]="5"
                        [scrollbarV]="true"
                        [rows]='advanceRows'>
+
+          <ngx-datatable-column prop="engineVersion" name="No" [frozenLeft]="true" [sortable]='true' headerClass="headerPurple">
+
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerNormal">
+                {{column.name}}
+              </div>
+            </ng-template>
+
+            <ng-template ngx-datatable-cell-template let-value="value">
+              {{value}}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column prop="id" name="Nombre" [frozenLeft]="true" [sortable]='true' headerClass="headerPurple">
+
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerNormal">
+                {{column.name}}
+              </div>
+            </ng-template>
+
+
+            <ng-template ngx-datatable-cell-template let-value="value">
+              {{value}}
+            </ng-template>
+          </ngx-datatable-column>
+
+
+          <ngx-datatable-column prop="id" name="Estado"  [frozenLeft]="true" [sortable]='true' headerClass="headerPurple">
+
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerNormal">
+                {{column.name}}
+              </div>
+            </ng-template>
+
+            <ng-template ngx-datatable-cell-template let-value="value">
+              {{value}}
+            </ng-template>
+          </ngx-datatable-column>
+
+
+          <ngx-datatable-column prop="id" name="Director" [frozenLeft]="true" [sortable]='true' headerClass="headerPurple">
+
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerNormal">
+                {{column.name}}
+              </div>
+            </ng-template>
+
+            <ng-template ngx-datatable-cell-template let-value="value">
+              {{value}}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column prop="id" name="Supervisor" [frozenLeft]="true" [sortable]='true' headerClass="headerPurple">
+
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerNormal">
+                {{column.name}}
+              </div>
+            </ng-template>
+
+            <ng-template ngx-datatable-cell-template let-value="value">
+              {{value}}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- Venta Pzs Mercancia -->
+          <ngx-datatable-column prop="id" name="Año Anterior" [sortable]='true' headerClass="headerYellow">
+
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerSuperior" [ngStyle]="{'width': column.width * 2 +'px' }">
+                Venta (Pzs) Mercancia
+              </div>
+              <div class="headerNormal">
+                {{column.name}}
+              </div>
+            </ng-template>
+
+
+            <ng-template ngx-datatable-cell-template let-value="value">
+              {{value}}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column prop="id" name="Año Actual" [sortable]='true' headerClass="headerYellow">
+
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerNormal">
+                {{column.name}}
+              </div>
+            </ng-template>
+
+
+            <ng-template ngx-datatable-cell-template let-value="value">
+              {{value}}
+            </ng-template>
+          </ngx-datatable-column>
+          <!-- -->
+
+          <!-- Venta ($) mercancia -->
+
+          <ngx-datatable-column prop="id" name="Año Anterior" [sortable]='true' headerClass="headerGreen">
+
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerSuperior" [ngStyle]="{'width': column.width * 5 +'px' }">
+                Venta ($) mercancia
+              </div>
+              <div class="headerNormal">
+                {{column.name}}
+              </div>
+            </ng-template>
+
+            <ng-template ngx-datatable-cell-template let-value="value">
+              {{value}}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column prop="id" name="Año Actual" [sortable]='true' headerClass="headerGreen">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerNormal">
+                {{column.name}}
+              </div>
+            </ng-template>
+            <ng-template ngx-datatable-cell-template let-value="value">
+              {{value}}
+            </ng-template>
+          </ngx-datatable-column>
+
+
+          <ngx-datatable-column prop="id" name="Año Act vs Ant" [sortable]='true' headerClass="headerGreen">
+
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerNormal">
+                {{column.name}}
+              </div>
+            </ng-template>
+
+            <ng-template ngx-datatable-cell-template let-value="value">
+              {{value}}
+            </ng-template>
+          </ngx-datatable-column>
+
+
+          <ngx-datatable-column prop="id" name="Año Ant vs Act %" [sortable]='true' headerClass="headerGreen">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerNormal">
+                {{column.name}}
+              </div>
+            </ng-template>
+            <ng-template ngx-datatable-cell-template let-value="value">
+              {{value}}
+            </ng-template>
+          </ngx-datatable-column>
+
+
+          <ngx-datatable-column prop="id" name="Año Ant vs Act MT %" [sortable]='true' headerClass="headerGreen">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerNormal">
+                {{column.name}}
+              </div>
+            </ng-template>
+            <ng-template ngx-datatable-cell-template let-value="value">
+              {{value}}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- -->
+
+          <!-- -->
+
+          <ngx-datatable-column prop="id" name="Cuota" [sortable]='true' headerClass="headerPurple">
+
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerNormal">
+                {{column.name}}
+              </div>
+            </ng-template>
+
+            <ng-template ngx-datatable-cell-template let-value="value">
+              {{value}}
+            </ng-template>
+          </ngx-datatable-column>
+
+
+          <ngx-datatable-column prop="id" name="Alcance %" [sortable]='true' headerClass="headerPurple">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerNormal">
+                {{column.name}}
+              </div>
+            </ng-template>
+            <ng-template ngx-datatable-cell-template let-value="value">
+              {{value}}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column prop="id" name="Cobertura %" [sortable]='true' headerClass="headerPurple">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerNormal">
+                {{column.name}}
+              </div>
+            </ng-template>
+            <ng-template ngx-datatable-cell-template let-value="value">
+              {{value}}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- -->
+
+
+          <!-- Num Tickets Mercancia-->
+
+          <ngx-datatable-column prop="id" name="Año Anterior" [sortable]='true' headerClass="headerTerracota">
+
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerSuperior" [ngStyle]="{'width': column.width * 2 +'px' }">
+                Num Tickets Mercancia
+              </div>
+              <div class="headerNormal">
+                {{column.name}}
+              </div>
+            </ng-template>
+
+            <ng-template ngx-datatable-cell-template let-value="value">
+              {{value}}
+            </ng-template>
+          </ngx-datatable-column>
+
+
+          <ngx-datatable-column prop="id" name="Año Actual" [sortable]='true' headerClass="headerTerracota">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerNormal">
+                {{column.name}}
+              </div>
+            </ng-template>
+            <ng-template ngx-datatable-cell-template let-value="value">
+              {{value}}
+            </ng-template>
+          </ngx-datatable-column>
+
+          <!-- -->
+
+
         </ngx-datatable>
       </div>
     </div>
