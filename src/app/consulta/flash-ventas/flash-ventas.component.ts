@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { SOAPService } from 'ngx-soap';
 import { pgDatePickerComponent } from '../../@pages/components/datepicker/datepicker.component';
+import { FlashVentasService } from '../../services/flash-ventas.service';
+import { ObtenVentasFlashRequest } from './classes/ObtenVentasFlashRequest';
+import { ObtenerVentaFlashVentasJson } from '../../../models/response/ObtenerVentaFlashVentasJson';
+
+import * as moment from 'moment';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-flash-ventas',
@@ -10,11 +14,10 @@ import { pgDatePickerComponent } from '../../@pages/components/datepicker/datepi
 })
 export class FlashVentasComponent implements OnInit {
 
-  optionsFechas = [
-    {value: 'jack', label: 'Jacks'},
-    {value: 'lucy', label: 'Lucy'},
-    {value: 'disabled', label: 'Disabled', disabled: true}
-  ];
+  isMobileTest = environment.mobileTest;
+
+
+  optionsFechas = [];
 
   optionsMarcas = [
     {value: '1', label: 'TODAS'},
@@ -35,7 +38,7 @@ export class FlashVentasComponent implements OnInit {
     {value: 'vsUBruta2', label: 'Utilidad Bruta -'}
   ];
 
-  selectedPeriodo;
+  selectedPeriodo: string;
   selectedMarca;
   selectedINCDEC;
 
@@ -62,20 +65,79 @@ export class FlashVentasComponent implements OnInit {
 
 // datos tabla dummy
 
-  constructor(private http: HttpClient, private soap: SOAPService) {
 
-    this.fetchSampleAdvance((data) => {
-      // push our inital complete list
-      this.advanceRows = data;
-    });
+  constructor(private _flashService: FlashVentasService) {
 
+    moment.locale('es');
 
   }
 
   ngOnInit() {
 
+
+    const dateStart = moment(new Date()).subtract(1, 'year');
+    const dateEnd = moment(new Date());
+
+    const tmpArray = [];
+
+    while (dateEnd > dateStart || dateStart.format('M') === dateEnd.format('M')) {
+      tmpArray.push({
+        value: dateStart.format('MM/YYYY'),
+        label: dateStart.format('MMMM').toUpperCase() + ' - ' + dateStart.format('YYYY')
+      });
+      dateStart.add(1, 'month');
+    }
+    this.optionsFechas = tmpArray.reverse();
+
+    this.selectedPeriodo = dateEnd.format('MM/YYYY');
+
+    this._startDate = moment().startOf('month').toDate();
+    this._endDate = moment().subtract(1, 'day').toDate();
+
+    const data = new ObtenVentasFlashRequest({
+      FechaInicial: moment(this._startDate).format('DD/MM/YYYY'),
+      FechaFinal: moment(this._endDate).format('DD/MM/YYYY')
+    });
+
+
+    if (this.isMobileTest) {
+
+      this.fetchSampleAdvance((data) => {
+        this.advanceRows = data;
+      });
+
+    } else {
+
+      const bodyReq = this._flashService.generaBodyFlashVentas(data);
+      this._flashService.makeSoapCall(bodyReq).subscribe(
+        (resp: Array<ObtenerVentaFlashVentasJson>) => {
+          this.advanceRows = resp;
+
+          console.log(resp);
+
+
+        }
+      );
+    }
+
   }
 
+
+  _startValuePeriodoChange = () => {
+
+    const currentDate = moment(new Date());
+    const [mesSeleccionado, anioSeleccionado] = this.selectedPeriodo.split('/');
+    const selectedPeriodo = moment(`${mesSeleccionado}-01-${anioSeleccionado}`, 'MM-DD-YYYY');
+
+    this._startDate = selectedPeriodo.toDate();
+
+    if (selectedPeriodo.get('month') === currentDate.get('month')) {
+      this._endDate = moment().subtract(1, 'day').toDate();
+    } else {
+      this._endDate = selectedPeriodo.endOf('month').toDate();
+    }
+
+  }
 
   _startValueChange = () => {
     if (this._startDate > this._endDate) {
@@ -106,7 +168,7 @@ export class FlashVentasComponent implements OnInit {
 
   fetchSampleAdvance(cb) {
     const req = new XMLHttpRequest();
-    req.open('GET', `assets/data/table_browser.json`);
+    req.open('GET', `assets/data/MockResponse.json`);
 
     req.onload = () => {
       cb(JSON.parse(req.response));

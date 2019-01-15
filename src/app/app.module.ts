@@ -81,6 +81,7 @@ import { BlankCorporateComponent } from './@pages/layouts/blank-corporate/blank-
 import { BlankSimplywhiteComponent } from './@pages/layouts/blank-simplywhite/blank-simplywhite.component';
 import { BlankCasualComponent } from './@pages/layouts/blank-casual/blank-casual.component';
 import { NgxSoapModule } from 'ngx-soap';
+import { FlashVentasService } from './services/flash-ventas.service';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
     suppressScrollX: true
@@ -155,7 +156,7 @@ export class AppHammerConfig extends HammerGestureConfig {
         DashboardModule,
         NgxSoapModule
     ],
-    providers: [QuickviewService, pagesToggleService, ChartService, SocialService, {
+    providers: [QuickviewService, pagesToggleService, ChartService, SocialService, FlashVentasService, {
         provide: PERFECT_SCROLLBAR_CONFIG,
         useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
     },
