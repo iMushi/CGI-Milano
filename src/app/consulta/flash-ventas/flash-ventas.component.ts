@@ -16,14 +16,13 @@ export class FlashVentasComponent implements OnInit {
 
   isMobileTest = environment.mobileTest;
 
-
   optionsFechas = [];
 
   optionsMarcas = [
-    {value: '1', label: 'TODAS'},
-    {value: '2', label: 'MELODY'},
-    {value: '3', label: 'MILANO'},
-    {value: '4', label: 'HOME & FASHION'}
+    {value: 0, label: 'TODAS'},
+    {value: 10, label: 'MELODY'},
+    {value: 30, label: 'MILANO'},
+    {value: 60, label: 'HOME & FASHION'}
   ];
 
 
@@ -39,8 +38,13 @@ export class FlashVentasComponent implements OnInit {
   ];
 
   selectedPeriodo: string;
-  selectedMarca;
+  selectedMarca = 0;
   selectedINCDEC;
+
+  porDia;
+  porMes;
+  porEstado;
+
 
   // Rango de fechas
   _startDate = null;
@@ -94,11 +98,6 @@ export class FlashVentasComponent implements OnInit {
     this._startDate = moment().startOf('month').toDate();
     this._endDate = moment().subtract(1, 'day').toDate();
 
-    const data = new ObtenVentasFlashRequest({
-      FechaInicial: moment(this._startDate).format('DD/MM/YYYY'),
-      FechaFinal: moment(this._endDate).format('DD/MM/YYYY')
-    });
-
 
     if (this.isMobileTest) {
 
@@ -108,16 +107,7 @@ export class FlashVentasComponent implements OnInit {
 
     } else {
 
-      const bodyReq = this._flashService.generaBodyFlashVentas(data);
-      this._flashService.makeSoapCall(bodyReq).subscribe(
-        (resp: Array<ObtenerVentaFlashVentasJson>) => {
-          this.advanceRows = resp;
-
-          console.log(resp);
-
-
-        }
-      );
+      this.getData();
     }
 
   }
@@ -137,18 +127,29 @@ export class FlashVentasComponent implements OnInit {
       this._endDate = selectedPeriodo.endOf('month').toDate();
     }
 
+    this.getData();
+
   }
+
+  _startMarcaChange = () => {
+    this.getData();
+  }
+
 
   _startValueChange = () => {
     if (this._startDate > this._endDate) {
       this._endDate = null;
     }
+
+    this.getData();
   }
 
   _endValueChange = () => {
     if (this._startDate > this._endDate) {
       this._startDate = null;
     }
+    this.getData();
+
   }
 
   _disabledStartDate = (startValue) => {
@@ -175,5 +176,27 @@ export class FlashVentasComponent implements OnInit {
     };
 
     req.send();
+  }
+
+
+  changeAgrup() {
+    this.getData();
+  }
+
+  getData() {
+
+    const data = new ObtenVentasFlashRequest({
+      Marca: this.selectedMarca,
+      FechaInicial: moment(this._startDate).format('DD/MM/YYYY'),
+      FechaFinal: moment(this._endDate).format('DD/MM/YYYY')
+    });
+
+    const bodyReq = this._flashService.generaBodyFlashVentas(data);
+    this._flashService.makeSoapCall(bodyReq).subscribe(
+      (resp: Array<ObtenerVentaFlashVentasJson>) => {
+        this.advanceRows = resp;
+      }
+    );
+
   }
 }

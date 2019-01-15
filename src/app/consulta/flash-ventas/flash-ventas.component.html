@@ -17,11 +17,11 @@
                            [ngModel]="selectedPeriodo"
                            (ngModelChange)="selectedPeriodo=$event;_startValuePeriodoChange()"
                            [PlaceHolder]="'Selecciona Mes'" AllowClear ShowSearch>
-                <pg-option
-                  *ngFor="let option of optionsFechas"
-                  [Label]="option.label"
-                  [Value]="option.value">
-                </pg-option>
+                  <pg-option
+                    *ngFor="let option of optionsFechas"
+                    [Label]="option.label"
+                    [Value]="option.value">
+                  </pg-option>
                 </pg-select>
               </div>
             </div>
@@ -75,18 +75,25 @@
 
                 <div class="col-md-6 col-sm-6">
                   <div class="checkbox  check-danger checkbox-circle">
-                    <input type="checkbox" value="0" id="checkbox7">
+                    <input type="checkbox" #checkEstado value="0" id="checkbox7"
+                           [(ngModel)]="porEstado"
+                           (change)="porDia=false;porMes=false; changeAgrup();">
                     <label for="checkbox7">Por Estado</label>
                   </div>
                   <div class="checkbox check-danger checkbox-circle">
-                    <input type="checkbox" value="1" id="checkbox8">
-                    <label for="checkbox8">Por D&iacute;</label>
+                    <input type="checkbox" #checkDia value="1" id="checkbox8"
+                           [(ngModel)]="porDia"
+                           (change)="porEstado=false;porMes=false;changeAgrup();">
+                    <label for="checkbox8">Por D&iacute;a</label>
                   </div>
                   <div class="checkbox check-danger checkbox-circle">
-                    <input type="checkbox" value="2" id="checkbox9">
+                    <input type="checkbox" #checkMes value="2" id="checkbox9"
+                           [(ngModel)]="porMes"
+                           (change)="porEstado=false;porDia=false;changeAgrup();">
                     <label for="checkbox9">Por Mes</label>
                   </div>
                 </div>
+
 
                 <div class="col-md-6 col-sm-6">
                   <div class="checkbox  check-danger">
@@ -104,11 +111,14 @@
             <div class="col-md-4">
               <div class="form-group form-group-default form-group-default-select2">
                 <label class="">Marca</label>
-                <pg-select style="width: 100%;" [(ngModel)]="selectedMarca" [PlaceHolder]="'Selecciona Marca'" AllowClear ShowSearch>
+                <pg-select style="width: 100%;"
+                           [ngModel]="selectedMarca"
+                           (ngModelChange)="selectedMarca=$event;_startMarcaChange()"
+                           [PlaceHolder]="'Selecciona Marca'" AllowClear ShowSearch>
                   <pg-option
                     *ngFor="let option of optionsMarcas"
                     [Label]="option.label"
-                    [Value]="option">
+                    [Value]="option.value">
                   </pg-option>
                 </pg-select>
               </div>
@@ -122,7 +132,7 @@
                   <pg-option
                     *ngFor="let option of optionsINCDEC"
                     [Label]="option.label"
-                    [Value]="option">
+                    [Value]="option.value">
                   </pg-option>
                 </pg-select>
               </div>
@@ -155,14 +165,14 @@
       <div class="table-responsive" style="height:450px;overflow-y: hidden">
         <ngx-datatable #tableAdvance class='table table-hover table-stripped'
                        [scrollbarH]="scrollBarHorizontal"
-                       [headerHeight]="50"
+                       [headerHeight]="70"
                        [footerHeight]="50"
                        [rowHeight]="50"
-                       [limit]="5"
+                       [limit]="20"
                        [scrollbarV]="true"
                        [rows]='advanceRows'>
 
-          <ngx-datatable-column prop="ID" name="No" [width]="60" [frozenLeft]="true" [sortable]='true' headerClass="headerPurple">
+          <ngx-datatable-column prop="ID" name="No" [width]="60" [frozenLeft]="true" [sortable]='true' headerClass="headerPurple" cellClass="cellClass">
 
             <ng-template let-column="column" ngx-datatable-header-template>
               <div class="headerNormal">
@@ -171,7 +181,9 @@
             </ng-template>
 
             <ng-template ngx-datatable-cell-template let-value="value">
-              {{value}}
+              <div class="cellText">
+                {{value}}
+              </div>
             </ng-template>
           </ngx-datatable-column>
 
@@ -264,7 +276,7 @@
 
             <ng-template ngx-datatable-cell-template let-value="value">
               <div class="cellText">
-              {{value}}
+                {{value}}
               </div>
             </ng-template>
           </ngx-datatable-column>

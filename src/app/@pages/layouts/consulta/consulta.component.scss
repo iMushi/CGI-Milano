@@ -167,6 +167,7 @@ $assets-url: "../../assets" !global;
 .headerNormal {
   position: relative;
   top: 10px;
+  height: 50px;
 }
 
 .ngx-datatable .datatable-header .datatable-header-cell.sortable .sort-btn{
@@ -178,6 +179,7 @@ $assets-url: "../../assets" !global;
   position: fixed;
   top: 3px;
   text-align: center;
+  color: black !important;
 }
 
 
@@ -196,4 +198,7 @@ $assets-url: "../../assets" !global;
   display: table-cell !important;
   vertical-align: middle !important;
   height: 50px;
+  /*
+  font-size: 11px !important;
+   */
 }
