@@ -3,9 +3,13 @@ import { pgDatePickerComponent } from '../../@pages/components/datepicker/datepi
 import { FlashVentasService } from '../../services/flash-ventas.service';
 import { ObtenVentasFlashRequest } from './classes/ObtenVentasFlashRequest';
 import { ObtenerVentaFlashVentasJson } from '../../../models/response/ObtenerVentaFlashVentasJson';
+import { DecimalPipe } from '@angular/common';
 
 import * as moment from 'moment';
 import { environment } from '../../../environments/environment';
+import { ObtenVentasFlashVentasRequestBody } from '../../../models/requestBody/ObtenVentasFlashVentasRequestBody ';
+import { LevelDrillDownModel } from '../../../models/levelDrillDown.model';
+import { pagesToggleService } from '../../@pages/services/toggler.service';
 
 @Component({
   selector: 'app-flash-ventas',
@@ -16,6 +20,12 @@ export class FlashVentasComponent implements OnInit {
 
   isMobileTest = environment.mobileTest;
 
+  dataToSend: ObtenVentasFlashVentasRequestBody;
+  dataBeforeAgrup: ObtenVentasFlashVentasRequestBody;
+
+  sentData;
+
+  summaryPosition = 'top';
   optionsFechas = [];
 
   optionsMarcas = [
@@ -41,10 +51,21 @@ export class FlashVentasComponent implements OnInit {
   selectedMarca = 0;
   selectedINCDEC;
 
+  showCiudad: boolean;
+  showEstado: boolean;
+  showDirector: boolean;
+  showSupervisor: boolean;
+
   porDia;
   porMes;
   porEstado;
 
+  nivel = 1;
+  nivelBread = 1;
+  nivelEstado = 1;
+  idRow;
+
+  levelDrillDown: Array<LevelDrillDownModel> = [];
 
   // Rango de fechas
   _startDate = null;
@@ -53,26 +74,19 @@ export class FlashVentasComponent implements OnInit {
   fechaDeInstance: pgDatePickerComponent;
   fechaAInstance: pgDatePickerComponent;
 
-  // datos tabla dummy
-
-  advanceColumns = [
-    {name: 'Rendering engine'},
-    {name: 'Browser'},
-    {name: 'Platform'},
-    {name: 'Engine version'},
-    {name: 'CSS grade'}
-  ];
   advanceRows = [];
 
   scrollBarHorizontal = (window.innerWidth < 960);
   columnModeSetting = (window.innerWidth < 960) ? 'standard' : 'force';
 
+
 // datos tabla dummy
 
 
-  constructor(private _flashService: FlashVentasService) {
+  constructor(private _flashService: FlashVentasService, private _pagesToggleService: pagesToggleService) {
 
     moment.locale('es');
+    _pagesToggleService.togglePinnedColumn(window.innerWidth > 1025);
 
   }
 
@@ -99,6 +113,8 @@ export class FlashVentasComponent implements OnInit {
     this._endDate = moment().subtract(1, 'day').toDate();
 
 
+    this.updateDataModel();
+
     if (this.isMobileTest) {
 
       this.fetchSampleAdvance((data) => {
@@ -110,6 +126,10 @@ export class FlashVentasComponent implements OnInit {
       this.getData();
     }
 
+
+    setTimeout(() => {
+      this.summaryPosition = 'bottom';
+    }, 3000);
   }
 
 
@@ -127,12 +147,12 @@ export class FlashVentasComponent implements OnInit {
       this._endDate = selectedPeriodo.endOf('month').toDate();
     }
 
-    this.getData();
+    this.getDataMismoNivel();
 
   }
 
   _startMarcaChange = () => {
-    this.getData();
+    this.getDataMismoNivel();
   }
 
 
@@ -141,15 +161,16 @@ export class FlashVentasComponent implements OnInit {
       this._endDate = null;
     }
 
-    this.getData();
+    this.getDataMismoNivel();
   }
 
   _endValueChange = () => {
     if (this._startDate > this._endDate) {
       this._startDate = null;
     }
-    this.getData();
 
+
+    this.getDataMismoNivel();
   }
 
   _disabledStartDate = (startValue) => {
@@ -180,23 +201,204 @@ export class FlashVentasComponent implements OnInit {
 
 
   changeAgrup() {
-    this.getData();
+    this.getDataMismoNivel();
   }
 
-  getData() {
+  getData(row?: ObtenerVentaFlashVentasJson) {
 
-    const data = new ObtenVentasFlashRequest({
+
+    if (this.porMes || this.porDia) {
+      return;
+    }
+
+    Object.assign(this.dataToSend, this.getInputData());
+
+    let nombre;
+    const tipo = this.getTipoQuery();
+    let addBread = false;
+
+
+    if (row) {
+      nombre = row.NOMBRE;
+      addBread = true;
+
+      if (this.porEstado) {
+
+        this.dataToSend.Nivel = 3;
+        this.dataToSend.Estado = row.NOMBRE;
+
+      } else {
+
+        this.dataToSend.Nivel = this.nivelBread;
+        this.dataToSend.Director = row.ID;
+        this.dataToSend.Estado = '';
+
+      }
+
+    }
+
+    this.dataToSend.Tipo = tipo;
+
+    const bodyReq = this.sentData = this._flashService.generaBodyFlashVentas(this.dataToSend);
+    this._flashService.makeSoapCall(bodyReq).subscribe(
+      (resp: Array<ObtenerVentaFlashVentasJson>) => {
+        this.advanceRows = resp;
+
+
+
+        if (this.dataToSend.Tipo === 'TIENDA' && this.dataToSend.Nivel === 3) {
+          this.showEstado = true;
+        }
+
+        this.showEstado = this.showDirector = this.showSupervisor = this.porEstado && this.dataToSend.Nivel === 3
+
+        if (addBread || this.levelDrillDown.length === 0) {
+          this.addLevel({...this.dataToSend}, nombre);
+        }
+      }
+    );
+  }
+
+  getDataMismoNivel() {
+
+    let resetBreadToHome = false;
+    const requestData = this.getCurrentLevelInfo().data;
+    Object.assign(requestData, this.getInputData());
+
+
+    if (this.porEstado) {
+
+      /***  nivel 1 por estado ***/
+      requestData.Nivel = 1;
+      requestData.Tipo = this.getTipoQuery();
+      /*** ***/
+    } else {
+
+      /*** Obtener último nivel sin agrupacion ***/
+
+      const [lastLevelSinAgrup] = this.levelDrillDown.filter(levelInfo => levelInfo.data.Tipo === 'TIENDA').slice(-1);
+
+
+      if (lastLevelSinAgrup) {
+        this.getDataFromBread(lastLevelSinAgrup);
+        return;
+      } else {
+
+        /** Reset Values to HOME **/
+        this.updateDataModel();
+        resetBreadToHome = true;
+        Object.assign(requestData, this.dataToSend);
+      }
+
+    }
+
+
+    const bodyReq = this.sentData = this._flashService.generaBodyFlashVentas(requestData);
+    this._flashService.makeSoapCall(bodyReq).subscribe(
+      (resp: Array<ObtenerVentaFlashVentasJson>) => {
+        this.advanceRows = resp;
+
+        if (resetBreadToHome) {
+          this.resetBread(requestData);
+        }
+      }
+    );
+  }
+
+
+  getDataFromBread(drillInfo: LevelDrillDownModel) {
+
+    Object.assign(drillInfo.data, this.getInputData());
+
+    const tipoQuery = drillInfo.data.Tipo;
+
+    this.porEstado = tipoQuery === 'ESTADO';
+    this.porMes = tipoQuery === 'MES';
+    this.porDia = tipoQuery === 'DIA';
+
+
+    const bodyReq = this.sentData = this._flashService.generaBodyFlashVentas(drillInfo.data);
+
+    this._flashService.makeSoapCall(bodyReq).subscribe(
+      (resp: Array<ObtenerVentaFlashVentasJson>) => {
+        this.advanceRows = resp;
+        this.nivelBread = drillInfo.level + 1;
+        this.levelDrillDown.splice(drillInfo.level);
+      }
+    );
+  }
+
+
+  updateDataModel() {
+
+    this.dataToSend = new ObtenVentasFlashRequest({
       Marca: this.selectedMarca,
       FechaInicial: moment(this._startDate).format('DD/MM/YYYY'),
       FechaFinal: moment(this._endDate).format('DD/MM/YYYY')
     });
-
-    const bodyReq = this._flashService.generaBodyFlashVentas(data);
-    this._flashService.makeSoapCall(bodyReq).subscribe(
-      (resp: Array<ObtenerVentaFlashVentasJson>) => {
-        this.advanceRows = resp;
-      }
-    );
-
   }
+
+
+  getInputData() {
+    return {
+      Marca: this.selectedMarca,
+      FechaInicial: moment(this._startDate).format('DD/MM/YYYY'),
+      FechaFinal: moment(this._endDate).format('DD/MM/YYYY')
+    };
+  }
+
+  getTipoQuery() {
+    return this.porMes ? 'MES' : this.porDia ? 'DIA' : this.porEstado ? 'ESTADO' : 'TIENDA';
+  }
+
+  addLevel(data: ObtenVentasFlashVentasRequestBody, nombre: string) {
+
+    this.levelDrillDown.push(Object.assign({}, {
+      level: this.nivelBread,
+      nombre: nombre
+    }, {data}));
+
+    this.nivelBread++;
+  }
+
+  resetBread(data: ObtenVentasFlashVentasRequestBody) {
+    this.levelDrillDown = [
+      Object.assign({}, {
+        level: 1,
+        nombre: ''
+      }, {data})
+    ];
+
+    this.nivelBread = 2;
+  }
+
+  goToLevel(nivel: number) {
+
+    const dataLevel = this.levelDrillDown.find(level => level.level === nivel);
+    if (nivel === 1) {
+      this.dataToSend.Director = 0;
+    }
+    this.getDataFromBread(dataLevel);
+  }
+
+  getCurrentLevelInfo() {
+    return this.levelDrillDown.find(levelInfo => levelInfo.level === this.nivelBread - 1);
+  }
+
+
+  sumaCantidades(celdas: Array<number>) {
+    const suma = celdas.reduce((sum, cell) => sum += cell, 0);
+    return new DecimalPipe('en-US').transform(suma, '1.0-0');
+  }
+
+  sumaPorcentaje(celdas: Array<number>) {
+    const suma = celdas.reduce((sum, cell) => sum += cell, 0);
+    return new DecimalPipe('en-US').transform(suma, '1.2-2');
+  }
+
+  nullFn() {
+    return ' - ';
+  }
+
+
 }

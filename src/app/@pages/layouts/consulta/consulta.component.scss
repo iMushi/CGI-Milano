@@ -133,33 +133,33 @@ $assets-url: "../../assets" !global;
 
 
 .headerPurple{
-  background-color: #7967B2;
   color: white !important;
+  background-image: linear-gradient(#0D23F4, #7967B2);
 }
 
 
 .headerYellow{
-  background-color: #F1C15F;
+  background-image: linear-gradient(#FDA228, #F1C15F);
   color: white !important;
 }
 
 .headerGreen {
-  background-color: #B2D273;
+  background-image: linear-gradient(#0B6930, #B2D273);
   color: white !important;
 }
 
 .headerTerracota {
-  background-color: #BD5758;
+  background-image: linear-gradient(#FC261C, #BD5758);
   color: white !important;
 }
 
 .headerAzul {
-  background-color: #66C8EB;
+  background-image: linear-gradient(#0826D2, #66C8EB);
   color: white !important;
 }
 
 .headerYellowPiezas {
-  background-color: #EBBC5C;
+  background-image: linear-gradient(#FDA228, #F1C15F);
   color: white !important;
 }
 
@@ -201,4 +201,29 @@ $assets-url: "../../assets" !global;
   /*
   font-size: 11px !important;
    */
+}
+
+datatable-summary-row,
+datatable-summary-row > datatable-body-row,
+datatable-summary-row > datatable-body-row > div,
+datatable-summary-row > datatable-body-row > div > datatable-body-cell{
+  background-color: #83909A !important;
+  color: white;
+  font-weight: bold;
+}
+
+
+.linkSelectTable {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.linkSelectTable:hover {
+  font-weight: bolder;
+  text-shadow: #A4A4A4 0.1em 0.1em 0.2em;
+}
+
+
+pg-breadcrumb{
+  display: block !important;
 }
