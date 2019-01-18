@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Renderer2 } from '@angular/core';
 import { pgDatePickerComponent } from '../../@pages/components/datepicker/datepicker.component';
 import { FlashVentasService } from '../../services/flash-ventas.service';
 import { ObtenVentasFlashRequest } from './classes/ObtenVentasFlashRequest';
@@ -20,6 +20,10 @@ export class FlashVentasComponent implements OnInit {
 
   isMobileTest = environment.mobileTest;
   dataToSend: ObtenVentasFlashVentasRequestBody;
+
+  rowHeight = 50;
+  summaryHeight = 50;
+
 
   sentData;
   summaryPosition = 'top';
@@ -80,7 +84,7 @@ export class FlashVentasComponent implements OnInit {
 // datos tabla dummy
 
 
-  constructor(private _flashService: FlashVentasService, public _pagesToggleService: pagesToggleService) {
+  constructor(private _flashService: FlashVentasService, public _pagesToggleService: pagesToggleService, private _renderer: Renderer2) {
 
     moment.locale('es');
 
@@ -126,9 +130,6 @@ export class FlashVentasComponent implements OnInit {
 
     this.showVerTiendas = true;
 
-    setTimeout(() => {
-      this.summaryPosition = 'bottom';
-    }, 3000);
   }
 
 
@@ -359,7 +360,7 @@ export class FlashVentasComponent implements OnInit {
 
         this.setColumnsVisibility();
       }
-    )
+    );
 
   }
 
@@ -445,9 +446,27 @@ export class FlashVentasComponent implements OnInit {
 
     this.showVerTiendas = (tipoQuery !== 'DIA' && tipoQuery !== 'MES') && data.Nivel !== 3 && !this.porEstado;
 
-
     this.currentTipoQuery = tipoQuery;
     this.showMargen = this.porMargen;
+
+
+    setTimeout(() => this.tableScroll({offsetY: 0}), 100);
+
+  }
+
+
+  tableScroll(event) {
+
+    const {offsetY} = event;
+    const totalH = (this.advanceRows.length * this.rowHeight); // altura Total;
+
+    const element = document.querySelector('datatable-summary-row');
+    let h = 330 + offsetY;
+    if (h + this.summaryHeight >= totalH && h <= totalH) {
+      h += 5;
+    }
+
+    this._renderer.setStyle(element, 'transform', 'translate3d(0px,' + h + 'px, 0px)');
   }
 
 }

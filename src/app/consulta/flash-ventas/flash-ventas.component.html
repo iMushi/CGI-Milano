@@ -193,13 +193,15 @@
                        [scrollbarH]="scrollBarHorizontal"
                        [summaryPosition]="'bottom'"
                        [summaryRow]="true"
-                       [summaryHeight]="50"
+                       [summaryHeight]="summaryHeight"
                        [headerHeight]="70"
                        [footerHeight]="50"
-                       [rowHeight]="50"
+                       [rowHeight]="rowHeight"
                        [limit]="20"
                        [scrollbarV]="true"
-                       [rows]='advanceRows'>
+                       [rows]='advanceRows'
+                        (scroll)="tableScroll($event)"
+                        (visible)="console.log('apareci')">
 
           <ngx-datatable-column prop="ID" name="No" [width]="60" [frozenLeft]="true" [sortable]='true' headerClass="headerPurple" cellClass="cellClass"
                                 [summaryFunc]="nullFn">
