@@ -14,7 +14,7 @@
               <div class="form-group form-group-default form-group-default-select2">
                 <label class="">Mes</label>
                 <pg-select style="width: 100%;"
-                           [ngModel]="selectedPeriodo"
+                           [(ngModel)]="selectedPeriodo"
                            (ngModelChange)="selectedPeriodo=$event;_startValuePeriodoChange()"
                            [PlaceHolder]="'Selecciona Mes'" AllowClear ShowSearch>
                   <pg-option
@@ -75,19 +75,19 @@
 
                 <div class="col-md-6 col-sm-6">
                   <div class="checkbox  check-danger checkbox-circle">
-                    <input type="checkbox" #checkEstado value="0" id="checkbox7"
+                    <input type="checkbox" value="0" id="checkbox7"
                            [(ngModel)]="porEstado"
                            (change)="porDia=false;porMes=false; changeAgrup();">
                     <label for="checkbox7">Por Estado</label>
                   </div>
                   <div class="checkbox check-danger checkbox-circle">
-                    <input type="checkbox" #checkDia value="1" id="checkbox8"
+                    <input type="checkbox" value="1" id="checkbox8"
                            [(ngModel)]="porDia"
                            (change)="porEstado=false;porMes=false;changeAgrup();">
                     <label for="checkbox8">Por D&iacute;a</label>
                   </div>
                   <div class="checkbox check-danger checkbox-circle">
-                    <input type="checkbox" #checkMes value="2" id="checkbox9"
+                    <input type="checkbox" value="2" id="checkbox9"
                            [(ngModel)]="porMes"
                            (change)="porEstado=false;porDia=false;changeAgrup();">
                     <label for="checkbox9">Por Mes</label>
@@ -97,7 +97,9 @@
 
                 <div class="col-md-6 col-sm-6">
                   <div class="checkbox  check-danger">
-                    <input type="checkbox" value="3" id="checkbox10">
+                    <input type="checkbox" value="1" id="checkbox10"
+                           [(ngModel)]="porMargen"
+                           (change)="changeAgrup();">
                     <label for="checkbox10">Margen</label>
                   </div>
                 </div>
@@ -128,7 +130,7 @@
             <div class="col-md-4">
               <div class="form-group form-group-default form-group-default-select2">
                 <label class="">INC/DEC Por:</label>
-                <pg-select style="width: 100%;" [(ngModel)]="selectedMarca" [PlaceHolder]="'Selecciona'" AllowClear ShowSearch>
+                <pg-select style="width: 100%;" [(ngModel)]="selectedINCDEC" [PlaceHolder]="'Selecciona'" AllowClear ShowSearch>
                   <pg-option
                     *ngFor="let option of optionsINCDEC"
                     [Label]="option.label"
@@ -178,7 +180,14 @@
       </ol>
     </div>
     <div class="card-body">
-      <div class="table-responsive" style="height:450px;overflow-y: hidden">
+      <div class="table-responsive" style="height:500px;overflow-y: hidden">
+
+        <ng-template #verTiendasSummaryTemplate let-row="row" >
+          <div>
+            <i class="fa fa-home linkSelectTable" aria-hidden="true" (click)="$event.preventDefault(); $event.stopPropagation(); showTiendas(row)"></i>
+          </div>
+        </ng-template>
+
 
         <ngx-datatable #tableAdvance class='table table-hover table-stripped'
                        [scrollbarH]="scrollBarHorizontal"
@@ -220,7 +229,28 @@
 
             <ng-template ngx-datatable-cell-template let-value="value" let-row="row">
               <div class="cellText">
-                <span class="linkSelectTable" (click)="getData(row)">{{value}}</span>
+
+                <span class="linkSelectTable" (click)="getData(row)">
+
+                  {{  (currentTipoQuery === 'DIA' || currentTipoQuery === 'MES') ?  (value | date:'dd/MM/yyyy') : value }}
+
+                </span>
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column prop="ID" name="Ver Tiendas" [width]="30" [frozenLeft]="true" [sortable]='false' headerClass="headerPurple" cellClass="cellClass"
+                                *ngIf="showVerTiendas" [summaryFunc]="nullFn" [summaryTemplate]="verTiendasSummaryTemplate">
+
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerNormal">
+                &nbsp;
+              </div>
+            </ng-template>
+
+            <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
+              <div class="cellText">
+                <i class="fa fa-home linkSelectTable" aria-hidden="true" (click)="$event.preventDefault(); $event.stopPropagation(); showTiendas(row)"></i>
               </div>
             </ng-template>
           </ngx-datatable-column>
@@ -451,6 +481,43 @@
 
           <!-- -->
 
+          <!-- Margen -->
+
+
+          <ngx-datatable-column prop="CostoLY" name="Anterior %" [sortable]='true' headerClass="headerGreen" cellClass="cellClass"
+                                [summaryFunc]="sumaPorcentaje" *ngIf="showMargen">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerSuperior" [ngStyle]="{'width': column.width * 2 +'px' }">
+                MARGEN
+              </div>
+              <div class="headerNormal">
+                {{column.name}}
+              </div>
+            </ng-template>
+            <ng-template ngx-datatable-cell-template let-value="value">
+              <div class="cellText">
+                {{value| number:'1.2-2'}}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+          <ngx-datatable-column prop="CostoCY" name="Actual %" [sortable]='true' headerClass="headerGreen" cellClass="cellClass"
+                                [summaryFunc]="sumaPorcentaje" *ngIf="showMargen">
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerNormal">
+                {{column.name}}
+              </div>
+            </ng-template>
+            <ng-template ngx-datatable-cell-template let-value="value">
+              <div class="cellText">
+                {{value | number:'1.2-2'}}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+
+
+          <!-- -->
+
 
           <!-- Num Tickets Mercancia-->
 
@@ -574,12 +641,11 @@
 </pg-container>
 
 <p>Pinned: {{_pagesToggleService.pinnedColumnsToggle | async}}</p>
-
+<br>
 <p>
   {{sentData}}
 </p>
 <br>
-
 <div>
   <ng-container *ngFor="let level of levelDrillDown">
     <span> Nivel: {{level.level}}</span>
@@ -590,6 +656,5 @@
   </ng-container>
 </div>
 
-<br>
 
 

@@ -11,14 +11,14 @@ import { AppRoutes } from './app.routing';
 import { AppComponent } from './app.component';
 //Layouts
 import {
-    BlankComponent,
-    CasualLayout,
-    CondensedComponent,
-    ConsultaComponent,
-    CorporateLayout,
-    ExecutiveLayout,
-    RootLayout,
-    SimplyWhiteLayout
+  BlankComponent,
+  CasualLayout,
+  CondensedComponent,
+  ConsultaComponent,
+  CorporateLayout,
+  ExecutiveLayout,
+  RootLayout,
+  SimplyWhiteLayout
 } from './@pages/layouts';
 //Layout Service - Required
 import { pagesToggleService } from './@pages/services/toggler.service';
@@ -35,16 +35,16 @@ import { pgCardModule } from './@pages/components/card/card.module';
 import { pgCardSocialModule } from './@pages/components/card-social/card-social.module';
 //Basic Bootstrap Modules
 import {
-    AccordionModule,
-    AlertModule,
-    BsDropdownModule,
-    ButtonsModule,
-    CollapseModule,
-    ModalModule,
-    ProgressbarModule,
-    TabsModule,
-    TooltipModule,
-    TypeaheadModule
+  AccordionModule,
+  AlertModule,
+  BsDropdownModule,
+  ButtonsModule,
+  CollapseModule,
+  ModalModule,
+  ProgressbarModule,
+  TabsModule,
+  TooltipModule,
+  TypeaheadModule
 } from 'ngx-bootstrap';
 //Pages Globaly required Components - Optional
 import { pgTabsModule } from './@pages/components/tabs/tabs.module';
@@ -84,87 +84,87 @@ import { NgxSoapModule } from 'ngx-soap';
 import { FlashVentasService } from './services/flash-ventas.service';
 
 const DEFAULT_PERFECT_SCROLLBAR_CONFIG: PerfectScrollbarConfigInterface = {
-    suppressScrollX: true
+  suppressScrollX: true
 };
 
 //Hammer Config Overide
 //https://github.com/angular/angular/issues/10541
 export class AppHammerConfig extends HammerGestureConfig {
-    overrides = <any>{
-        'pinch': {enable: false},
-        'rotate': {enable: false}
-    };
+  overrides = <any>{
+    'pinch': {enable: false},
+    'rotate': {enable: false}
+  };
 }
 
 @NgModule({
-    declarations: [
-        AppComponent,
-        CondensedComponent,
-        CorporateLayout,
-        SimplyWhiteLayout,
-        ExecutiveLayout,
-        CasualLayout,
-        SidebarComponent, QuickviewComponent, SearchOverlayComponent, HeaderComponent, HorizontalMenuComponent,
-        BlankComponent,
-        RootLayout,
-        CardsComponentPage,
-        ViewsPageComponent,
-        ChartsComponent,
-        SocialComponent,
-        StepsformDirective,
-        CoverpageDirective,
-        CondensedDashboardComponent,
-        SimplyWhiteDashboardComponent,
-        CasualDashboardComponent,
-        CorporateDashboardComponent,
-        ExecutiveDashboardComponent,
-        BlankCorporateComponent,
-        BlankSimplywhiteComponent,
-        BlankCasualComponent,
-        ConsultaComponent
-    ],
-    imports: [
-        BrowserModule,
-        BrowserAnimationsModule,
-        CommonModule,
-        FormsModule,
-        HttpClientModule,
-        SharedModule,
-        ProgressModule,
-        pgListViewModule,
-        pgCardModule,
-        pgCardSocialModule,
-        RouterModule.forRoot(AppRoutes),
-        BsDropdownModule.forRoot(),
-        AccordionModule.forRoot(),
-        AlertModule.forRoot(),
-        ButtonsModule.forRoot(),
-        CollapseModule.forRoot(),
-        ModalModule.forRoot(),
-        ProgressbarModule.forRoot(),
-        TabsModule.forRoot(),
-        TooltipModule.forRoot(),
-        TypeaheadModule.forRoot(),
-        NvD3Module,
-        pgTabsModule,
-        NgxEchartsModule,
-        IsotopeModule,
-        NgxDnDModule,
-        QuillModule,
-        PerfectScrollbarModule,
-        pgSwitchModule,
-        DashboardModule,
-        NgxSoapModule
-    ],
-    providers: [QuickviewService, pagesToggleService, ChartService, SocialService, FlashVentasService, {
-        provide: PERFECT_SCROLLBAR_CONFIG,
-        useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
-    },
-        {
-            provide: HAMMER_GESTURE_CONFIG,
-            useClass: AppHammerConfig
-        }],
-    bootstrap: [AppComponent]
+  declarations: [
+    AppComponent,
+    CondensedComponent,
+    CorporateLayout,
+    SimplyWhiteLayout,
+    ExecutiveLayout,
+    CasualLayout,
+    SidebarComponent, QuickviewComponent, SearchOverlayComponent, HeaderComponent, HorizontalMenuComponent,
+    BlankComponent,
+    RootLayout,
+    CardsComponentPage,
+    ViewsPageComponent,
+    ChartsComponent,
+    SocialComponent,
+    StepsformDirective,
+    CoverpageDirective,
+    CondensedDashboardComponent,
+    SimplyWhiteDashboardComponent,
+    CasualDashboardComponent,
+    CorporateDashboardComponent,
+    ExecutiveDashboardComponent,
+    BlankCorporateComponent,
+    BlankSimplywhiteComponent,
+    BlankCasualComponent,
+    ConsultaComponent
+  ],
+  imports: [
+    BrowserModule,
+    BrowserAnimationsModule,
+    CommonModule,
+    FormsModule,
+    HttpClientModule,
+    SharedModule,
+    ProgressModule,
+    pgListViewModule,
+    pgCardModule,
+    pgCardSocialModule,
+    RouterModule.forRoot(AppRoutes),
+    BsDropdownModule.forRoot(),
+    AccordionModule.forRoot(),
+    AlertModule.forRoot(),
+    ButtonsModule.forRoot(),
+    CollapseModule.forRoot(),
+    ModalModule.forRoot(),
+    ProgressbarModule.forRoot(),
+    TabsModule.forRoot(),
+    TooltipModule.forRoot(),
+    TypeaheadModule.forRoot(),
+    NvD3Module,
+    pgTabsModule,
+    NgxEchartsModule,
+    IsotopeModule,
+    NgxDnDModule,
+    QuillModule,
+    PerfectScrollbarModule,
+    pgSwitchModule,
+    DashboardModule,
+    NgxSoapModule
+  ],
+  providers: [QuickviewService, pagesToggleService, ChartService, SocialService, FlashVentasService, {
+    provide: PERFECT_SCROLLBAR_CONFIG,
+    useValue: DEFAULT_PERFECT_SCROLLBAR_CONFIG
+  },
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: AppHammerConfig
+    }],
+  bootstrap: [AppComponent]
 })
 export class AppModule {
 }

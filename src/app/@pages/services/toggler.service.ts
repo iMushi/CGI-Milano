@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 @Injectable()
 export class pagesToggleService {
 
   //Pnned Columns Toggle
-  private _pinnedColumnsToggle = new Subject();
+  private _pinnedColumnsToggle = new BehaviorSubject(true);
   pinnedColumnsToggle = this._pinnedColumnsToggle.asObservable();
 
   //Search Toggle

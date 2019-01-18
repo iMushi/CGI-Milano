@@ -19,12 +19,9 @@ import { pagesToggleService } from '../../@pages/services/toggler.service';
 export class FlashVentasComponent implements OnInit {
 
   isMobileTest = environment.mobileTest;
-
   dataToSend: ObtenVentasFlashVentasRequestBody;
-  dataBeforeAgrup: ObtenVentasFlashVentasRequestBody;
 
   sentData;
-
   summaryPosition = 'top';
   optionsFechas = [];
 
@@ -37,6 +34,7 @@ export class FlashVentasComponent implements OnInit {
 
 
   optionsINCDEC = [
+    {value: '', label: 'Seleccione'},
     {value: 'vsVenta1', label: 'Venta +'},
     {value: 'vsVenta2', label: 'Venta -'},
     {value: 'vsCuota1', label: 'Cuota +'},
@@ -49,21 +47,21 @@ export class FlashVentasComponent implements OnInit {
 
   selectedPeriodo: string;
   selectedMarca = 0;
-  selectedINCDEC;
+  selectedINCDEC = '';
 
   showCiudad: boolean;
   showEstado: boolean;
   showDirector: boolean;
   showSupervisor: boolean;
+  showVerTiendas: boolean;
+  showMargen: boolean;
 
+  porMargen;
   porDia;
   porMes;
   porEstado;
-
-  nivel = 1;
   nivelBread = 1;
-  nivelEstado = 1;
-  idRow;
+  currentTipoQuery;
 
   levelDrillDown: Array<LevelDrillDownModel> = [];
 
@@ -77,15 +75,15 @@ export class FlashVentasComponent implements OnInit {
   advanceRows = [];
 
   scrollBarHorizontal = (window.innerWidth < 960);
-  columnModeSetting = (window.innerWidth < 960) ? 'standard' : 'force';
 
 
 // datos tabla dummy
 
 
-  constructor(private _flashService: FlashVentasService, private _pagesToggleService: pagesToggleService) {
+  constructor(private _flashService: FlashVentasService, public _pagesToggleService: pagesToggleService) {
 
     moment.locale('es');
+
     _pagesToggleService.togglePinnedColumn(window.innerWidth > 1025);
 
   }
@@ -126,6 +124,7 @@ export class FlashVentasComponent implements OnInit {
       this.getData();
     }
 
+    this.showVerTiendas = true;
 
     setTimeout(() => {
       this.summaryPosition = 'bottom';
@@ -245,16 +244,12 @@ export class FlashVentasComponent implements OnInit {
         this.advanceRows = resp;
 
 
-
-        if (this.dataToSend.Tipo === 'TIENDA' && this.dataToSend.Nivel === 3) {
-          this.showEstado = true;
-        }
-
-        this.showEstado = this.showDirector = this.showSupervisor = this.porEstado && this.dataToSend.Nivel === 3
-
         if (addBread || this.levelDrillDown.length === 0) {
           this.addLevel({...this.dataToSend}, nombre);
         }
+
+        this.setColumnsVisibility();
+
       }
     );
   }
@@ -272,6 +267,14 @@ export class FlashVentasComponent implements OnInit {
       requestData.Nivel = 1;
       requestData.Tipo = this.getTipoQuery();
       /*** ***/
+    } else if (this.porDia) {
+      requestData.Nivel = 4;
+      requestData.Tipo = this.getTipoQuery();
+    } else if (this.porMes) {
+
+      requestData.Nivel = 1;
+      requestData.Tipo = this.getTipoQuery();
+
     } else {
 
       /*** Obtener último nivel sin agrupacion ***/
@@ -292,6 +295,10 @@ export class FlashVentasComponent implements OnInit {
 
     }
 
+    if (this.porMargen) {
+      requestData.MT = 1;
+    }
+
 
     const bodyReq = this.sentData = this._flashService.generaBodyFlashVentas(requestData);
     this._flashService.makeSoapCall(bodyReq).subscribe(
@@ -301,6 +308,9 @@ export class FlashVentasComponent implements OnInit {
         if (resetBreadToHome) {
           this.resetBread(requestData);
         }
+
+        this.setColumnsVisibility();
+
       }
     );
   }
@@ -324,8 +334,33 @@ export class FlashVentasComponent implements OnInit {
         this.advanceRows = resp;
         this.nivelBread = drillInfo.level + 1;
         this.levelDrillDown.splice(drillInfo.level);
+
+        this.setColumnsVisibility();
       }
     );
+  }
+
+  showTiendas(row: ObtenerVentaFlashVentasJson) {
+
+
+    const requestData = {...this.getCurrentLevelInfo().data};
+    const {ID, NOMBRE} = row;
+
+    requestData.Nivel = 3;
+    requestData.Director = !Number(ID) ? 0 : ID;
+
+
+    const bodyReq = this.sentData = this._flashService.generaBodyFlashVentas(requestData);
+    this._flashService.makeSoapCall(bodyReq).subscribe(
+      (resp: Array<ObtenerVentaFlashVentasJson>) => {
+        this.advanceRows = resp;
+
+        this.addLevel({...requestData}, NOMBRE);
+
+        this.setColumnsVisibility();
+      }
+    )
+
   }
 
 
@@ -397,8 +432,22 @@ export class FlashVentasComponent implements OnInit {
   }
 
   nullFn() {
-    return ' - ';
+    return '&nbsp;';
   }
 
+  setColumnsVisibility() {
+
+    const {data} = this.getCurrentLevelInfo();
+    const tipoQuery = this.getTipoQuery();
+
+    this.showEstado = this.showDirector = this.showSupervisor =
+      (this.porEstado && data.Nivel === 3) || (!this.porEstado && data.Tipo === 'TIENDA' && data.Nivel === 3);
+
+    this.showVerTiendas = (tipoQuery !== 'DIA' && tipoQuery !== 'MES') && data.Nivel !== 3 && !this.porEstado;
+
+
+    this.currentTipoQuery = tipoQuery;
+    this.showMargen = this.porMargen;
+  }
 
 }
