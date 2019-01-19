@@ -200,8 +200,7 @@
                        [limit]="20"
                        [scrollbarV]="true"
                        [rows]='advanceRows'
-                        (scroll)="tableScroll($event)"
-                        (visible)="console.log('apareci')">
+                        (scroll)="tableScroll($event)">
 
           <ngx-datatable-column prop="ID" name="No" [width]="60" [frozenLeft]="true" [sortable]='true' headerClass="headerPurple" cellClass="cellClass"
                                 [summaryFunc]="nullFn">
@@ -404,7 +403,7 @@
 
 
           <ngx-datatable-column prop="VarVtaPesos" name="Año Ant vs Act %" [sortable]='true' headerClass="headerGreen" cellClass="cellClass"
-                                [summaryFunc]="sumaPorcentaje">
+                                [summaryFunc]="getCalculoVarVtaPesos">
             <ng-template let-column="column" ngx-datatable-header-template>
               <div class="headerNormal">
                 {{column.name}}
@@ -419,7 +418,7 @@
 
 
           <ngx-datatable-column prop="VARMT" name="Año Ant vs Act MT %" [sortable]='true' headerClass="headerGreen" cellClass="cellClass"
-                                [summaryFunc]="sumaPorcentaje">
+                                [summaryFunc]="getCalculoVARMT">
             <ng-template let-column="column" ngx-datatable-header-template>
               <div class="headerNormal">
                 {{column.name}}
@@ -454,7 +453,7 @@
 
 
           <ngx-datatable-column prop="ALCANCE" name="Alcance %" [sortable]='true' headerClass="headerPurple" cellClass="cellClass"
-                                [summaryFunc]="sumaPorcentaje">
+                                [summaryFunc]="getCalculoALCANCE">
             <ng-template let-column="column" ngx-datatable-header-template>
               <div class="headerNormal">
                 {{column.name}}
@@ -468,7 +467,7 @@
           </ngx-datatable-column>
 
           <ngx-datatable-column prop="COBERTURA" name="Cobertura %" [sortable]='true' headerClass="headerPurple" cellClass="cellClass"
-                                [summaryFunc]="sumaPorcentaje">
+                                [summaryFunc]="getCalculoCOBERTURA">
             <ng-template let-column="column" ngx-datatable-header-template>
               <div class="headerNormal">
                 {{column.name}}
@@ -562,7 +561,7 @@
 
           <!-- Tickets Prom. Mercan. ($) -->
           <ngx-datatable-column prop="ITTKPROMCN" name="Año Anterior" [sortable]='true' headerClass="headerAzul" cellClass="cellClass"
-                                [summaryFunc]="sumaCantidades">
+                                [summaryFunc]="getCalculoITTKPROMCN">
 
             <ng-template let-column="column" ngx-datatable-header-template>
               <div class="headerSuperior" [ngStyle]="{'width': column.width * 2 +'px' }">
@@ -582,7 +581,7 @@
 
 
           <ngx-datatable-column prop="ITTKPROMC" name="Año Actual" [sortable]='true' headerClass="headerAzul" cellClass="cellClass"
-                                [summaryFunc]="sumaCantidades">
+                                [summaryFunc]="getCalculoITTKPROMC">
             <ng-template let-column="column" ngx-datatable-header-template>
               <div class="headerNormal">
                 {{column.name}}
@@ -600,7 +599,7 @@
 
           <!-- Piezas Por Tickets -->
           <ngx-datatable-column prop="ITTKPRTAEN" name="Año Anterior" [sortable]='true' headerClass="headerYellowPiezas" cellClass="cellClass"
-                                [summaryFunc]="sumaPorcentaje">
+                                [summaryFunc]="getCalculoITTKPRTAEN">
 
             <ng-template let-column="column" ngx-datatable-header-template>
               <div class="headerSuperior" [ngStyle]="{'width': column.width * 2 +'px' }">
@@ -620,7 +619,7 @@
 
 
           <ngx-datatable-column prop="ITTKPRTAE" name="Año Actual" [sortable]='true' headerClass="headerYellowPiezas" cellClass="cellClass"
-                                [summaryFunc]="sumaPorcentaje">
+                                [summaryFunc]="getCalculoITTKPRTAE">
             <ng-template let-column="column" ngx-datatable-header-template>
               <div class="headerNormal">
                 {{column.name}}
