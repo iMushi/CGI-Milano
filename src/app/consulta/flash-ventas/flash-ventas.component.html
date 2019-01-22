@@ -305,7 +305,7 @@
 
           <ngx-datatable-column [draggable]="false" prop="director" name="Director" [sortable]='true' [frozenLeft]="_pagesToggleService.pinnedColumnsToggle | async"
                                 headerClass="headerPurple"
-                                cellClass="cellClass" *ngIf="showDirecto && !showModalInfor"
+                                cellClass="cellClass" *ngIf="showDirector && !showModalInfo"
                                 [summaryFunc]="nullFn">
 
             <ng-template let-column="column" ngx-datatable-header-template>
