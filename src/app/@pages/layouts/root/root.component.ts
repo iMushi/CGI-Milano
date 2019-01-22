@@ -227,6 +227,7 @@ export class RootLayout implements OnInit, OnDestroy {
   @HostListener('window:resize', [])
   onResize() {
     this.autoHideMenuPin();
+    this.toggler.fireDatatableResize();
   }
 
   //Utils

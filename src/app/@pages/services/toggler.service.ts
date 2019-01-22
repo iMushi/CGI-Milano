@@ -5,6 +5,11 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 @Injectable()
 export class pagesToggleService {
 
+  //Resize ngx-datatable
+  private _resizeDatatable = new Subject();
+  resizeDatatable$ = this._resizeDatatable.asObservable();
+
+
   //Pnned Columns Toggle
   private _pinnedColumnsToggle = new BehaviorSubject(true);
   pinnedColumnsToggle = this._pinnedColumnsToggle.asObservable();
@@ -127,6 +132,10 @@ export class pagesToggleService {
 
   togglePinnedColumn(toggle: boolean) {
     this._pinnedColumnsToggle.next(toggle);
+  }
+
+  fireDatatableResize() {
+    this._resizeDatatable.next(true);
   }
 
 }

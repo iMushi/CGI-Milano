@@ -1,5 +1,5 @@
 <div style="overflow: hidden">
-  <pg-container extraHorizontalClass="bg-white p-l-0 p-r-0" extraClass="bg-white sm-p-l-0 sm-p-r-0">
+  <pg-container *ngIf="!showModalInfo" extraHorizontalClass="bg-white p-l-0 p-r-0" extraClass="bg-white sm-p-l-0 sm-p-r-0">
     <!-- START card -->
     <div class="inner" pg-parallax>
 
@@ -114,7 +114,7 @@
               <div class="form-group form-group-default form-group-default-select2">
                 <label class="">Marca</label>
                 <pg-select style="width: 100%;"
-                           [ngModel]="selectedMarca"
+                           [(ngModel)]="selectedMarca"
                            (ngModelChange)="selectedMarca=$event;_startMarcaChange()"
                            [PlaceHolder]="'Selecciona Marca'" AllowClear ShowSearch>
                   <pg-option
@@ -130,7 +130,9 @@
             <div class="col-md-4">
               <div class="form-group form-group-default form-group-default-select2">
                 <label class="">INC/DEC Por:</label>
-                <pg-select style="width: 100%;" [(ngModel)]="selectedINCDEC" [PlaceHolder]="'Selecciona'" AllowClear ShowSearch>
+                <pg-select style="width: 100%;" [(ngModel)]="selectedINCDEC"
+                           (ngModelChange)="selectedINCDEC=$event;_startINCDECChange()"
+                           [PlaceHolder]="'Selecciona'" AllowClear ShowSearch>
                   <pg-option
                     *ngFor="let option of optionsINCDEC"
                     [Label]="option.label"
@@ -172,6 +174,11 @@
 
           <ng-template #finalBread>
             <li class="breadcrumb-item active">{{ i === 0 ? 'HOME' : info.nombre }}</li>
+
+            <li *ngIf="showModalInfo" class="breadcrumb-item linkSelectTable" (click)="$event.preventDefault(); $event.stopPropagation(); exitModalInfo(row)">Cerrar
+              <i class="fa fa-close" aria-hidden="true"></i>
+            </li>
+
           </ng-template>
 
         </ng-container>
@@ -180,9 +187,9 @@
       </ol>
     </div>
     <div class="card-body">
-      <div class="table-responsive" style="height:500px;overflow-y: hidden">
+      <div class="table-responsive" style="height:500px;overflow-y: hidden" #tableContainer>
 
-        <ng-template #verTiendasSummaryTemplate let-row="row" >
+        <ng-template #verTiendasSummaryTemplate let-row="row">
           <div>
             <i class="fa fa-home linkSelectTable" aria-hidden="true" (click)="$event.preventDefault(); $event.stopPropagation(); showTiendas(row)"></i>
           </div>
@@ -192,18 +199,17 @@
         <ngx-datatable #tableAdvance class='table table-hover table-stripped'
                        [scrollbarH]="scrollBarHorizontal"
                        [summaryPosition]="'bottom'"
-                       [summaryRow]="true"
+                       [summaryRow]="summaryRow"
                        [summaryHeight]="summaryHeight"
                        [headerHeight]="70"
                        [footerHeight]="50"
                        [rowHeight]="rowHeight"
-                       [limit]="20"
                        [scrollbarV]="true"
                        [rows]='advanceRows'
-                        (scroll)="tableScroll($event)">
+                       (scroll)="tableScroll($event)">
 
           <ngx-datatable-column [draggable]="false" prop="ID" name="No" [width]="60" [frozenLeft]="true" [sortable]='true' headerClass="headerPurple" cellClass="cellClass"
-                                [summaryFunc]="nullFn">
+                                [summaryFunc]="nullFn" *ngIf="!showModalInfo">
 
             <ng-template let-column="column" ngx-datatable-header-template>
               <div class="headerNormal">
@@ -219,7 +225,7 @@
           </ngx-datatable-column>
 
           <ngx-datatable-column [draggable]="false" prop="NOMBRE" name="Nombre" [width]="150" [frozenLeft]="true" [sortable]='true' headerClass="headerPurple" cellClass="cellClass"
-                                [summaryFunc]="nullFn">
+                                [summaryFunc]="nullFn" *ngIf="!showModalInfo">
 
             <ng-template let-column="column" ngx-datatable-header-template>
               <div class="headerNormal">
@@ -233,15 +239,36 @@
 
                 <span class="linkSelectTable" (click)="getData(row)">
 
-                  {{  (currentTipoQuery === 'DIA' || currentTipoQuery === 'MES') ?  (value | date:'dd/MM/yyyy') : value }}
+                  {{  (currentTipoQuery === 'DIA' || currentTipoQuery === 'MES') ? (value | date:'dd/MM/yyyy') : value }}
 
                 </span>
               </div>
             </ng-template>
           </ngx-datatable-column>
 
-          <ngx-datatable-column [draggable]="false" name="Ver Tiendas" [width]="60" [frozenLeft]="_pagesToggleService.pinnedColumnsToggle | async" [sortable]='false' headerClass="headerPurple" cellClass="cellClass"
-                                *ngIf="showVerTiendas" [summaryFunc]="nullFn" [summaryTemplate]="verTiendasSummaryTemplate">
+
+          <!-- Informacion de la modal -->
+          <ngx-datatable-column [draggable]="false" prop="ITFECHA" name="" [width]="150" [frozenLeft]="true" [sortable]='true' headerClass="headerPurple" cellClass="cellClass"
+                                [summaryFunc]="nullFn" *ngIf="showModalInfo">
+
+            <ng-template let-column="column" ngx-datatable-header-template>
+              <div class="headerNormal">
+                {{column.name}}
+              </div>
+            </ng-template>
+
+
+            <ng-template ngx-datatable-cell-template let-value="value" let-row="row">
+              <div class="cellText">
+                {{ currentTipoQuery === 'MES' ? row.NOMBRE : currentTipoQuery === 'DIA' ? row.ID : transformDateToAmerican(value) }}
+              </div>
+            </ng-template>
+          </ngx-datatable-column>
+          <!-- --->
+
+          <ngx-datatable-column [draggable]="false" name="Ver Tiendas" [width]="60" [frozenLeft]="_pagesToggleService.pinnedColumnsToggle | async" [sortable]='false'
+                                headerClass="headerPurple" cellClass="cellClass"
+                                *ngIf="showVerTiendas && !showModalInfo" [summaryFunc]="nullFn" [summaryTemplate]="verTiendasSummaryTemplate">
 
             <ng-template let-column="column" ngx-datatable-header-template>
               <div class="headerNormal">
@@ -249,7 +276,7 @@
               </div>
             </ng-template>
 
-            <ng-template ngx-datatable-cell-te  mplate let-row="row" let-value="value">
+            <ng-template ngx-datatable-cell-template let-row="row" let-value="value">
               <div class="cellText">
                 <i class="fa fa-home linkSelectTable" aria-hidden="true" (click)="$event.preventDefault(); $event.stopPropagation(); showTiendas(row)"></i>
               </div>
@@ -257,8 +284,9 @@
           </ngx-datatable-column>
 
 
-          <ngx-datatable-column [draggable]="false" prop="estado" name="Estado" [sortable]='true' [frozenLeft]="_pagesToggleService.pinnedColumnsToggle | async" headerClass="headerPurple"
-                                cellClass="cellClass" *ngIf="showEstado"
+          <ngx-datatable-column [draggable]="false" prop="estado" name="Estado" [sortable]='true' [frozenLeft]="_pagesToggleService.pinnedColumnsToggle | async"
+                                headerClass="headerPurple"
+                                cellClass="cellClass" *ngIf="showEstado && !showModalInfo"
                                 [summaryFunc]="nullFn">
 
             <ng-template let-column="column" ngx-datatable-header-template>
@@ -275,8 +303,9 @@
           </ngx-datatable-column>
 
 
-          <ngx-datatable-column [draggable]="false" prop="director" name="Director" [sortable]='true' [frozenLeft]="_pagesToggleService.pinnedColumnsToggle | async" headerClass="headerPurple"
-                                cellClass="cellClass" *ngIf="showDirector"
+          <ngx-datatable-column [draggable]="false" prop="director" name="Director" [sortable]='true' [frozenLeft]="_pagesToggleService.pinnedColumnsToggle | async"
+                                headerClass="headerPurple"
+                                cellClass="cellClass" *ngIf="showDirecto && !showModalInfor"
                                 [summaryFunc]="nullFn">
 
             <ng-template let-column="column" ngx-datatable-header-template>
@@ -292,8 +321,9 @@
             </ng-template>
           </ngx-datatable-column>
 
-          <ngx-datatable-column [draggable]="false" prop="supervisor" name="Supervisor" [sortable]='true' [frozenLeft]="_pagesToggleService.pinnedColumnsToggle|async" headerClass="headerPurple"
-                                cellClass="cellClass" *ngIf="showSupervisor"
+          <ngx-datatable-column [draggable]="false" prop="supervisor" name="Supervisor" [sortable]='true' [frozenLeft]="_pagesToggleService.pinnedColumnsToggle|async"
+                                headerClass="headerPurple"
+                                cellClass="cellClass" *ngIf="showSupervisor && !showModalInfo"
                                 [summaryFunc]="nullFn">
 
             <ng-template let-column="column" ngx-datatable-header-template>
@@ -641,8 +671,6 @@
   <!-- END card -->
 </pg-container>
 
-<p>Pinned: {{_pagesToggleService.pinnedColumnsToggle | async}}</p>
-<br>
 <p>
   {{sentData}}
 </p>

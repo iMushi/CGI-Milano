@@ -1,28 +1,49 @@
-import { Component, OnInit, Renderer2 } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, Renderer2, ViewChild } from '@angular/core';
 import { pgDatePickerComponent } from '../../@pages/components/datepicker/datepicker.component';
 import { FlashVentasService } from '../../services/flash-ventas.service';
 import { ObtenVentasFlashRequest } from './classes/ObtenVentasFlashRequest';
 import { ObtenerVentaFlashVentasJson } from '../../../models/response/ObtenerVentaFlashVentasJson';
-import { DecimalPipe } from '@angular/common';
 
 import * as moment from 'moment';
 import { environment } from '../../../environments/environment';
 import { ObtenVentasFlashVentasRequestBody } from '../../../models/requestBody/ObtenVentasFlashVentasRequestBody ';
 import { LevelDrillDownModel } from '../../../models/levelDrillDown.model';
 import { pagesToggleService } from '../../@pages/services/toggler.service';
+import {
+  calculaSummary,
+  getCalculoALCANCE,
+  getCalculoCOBERTURA,
+  getCalculoITTKPROMC,
+  getCalculoITTKPROMCN,
+  getCalculoITTKPRTAE,
+  getCalculoITTKPRTAEN,
+  getCalculoVARMT,
+  getCalculoVarVtaPesos,
+  maxLevelTipoQuery,
+  sumaCantidades,
+  sumaPorcentaje,
+  tipoQuery,
+  transformDateToAmerican
+} from './classes/flashVentasCommon';
+import { Subscription } from 'rxjs/Subscription';
+import { DatePipe } from '@angular/common';
 
 @Component({
   selector: 'app-flash-ventas',
   templateUrl: './flash-ventas.component.html',
   styleUrls: ['./flash-ventas.component.scss']
 })
-export class FlashVentasComponent implements OnInit {
+export class FlashVentasComponent implements OnInit, OnDestroy {
+
+  @ViewChild('tableAdvance') tableAdvance: any;
+  @ViewChild('tableContainer') tableContainer: ElementRef;
 
   isMobileTest = environment.mobileTest;
   dataToSend: ObtenVentasFlashVentasRequestBody;
 
   rowHeight = 50;
   summaryHeight = 50;
+  summaryRow = true;
 
   calculoVarVtaPesos: string;
   calculoVARMT: string;
@@ -32,6 +53,19 @@ export class FlashVentasComponent implements OnInit {
   calculoITTKPROMC: string;
   calculoITTKPRTAEN: string;
   calculoITTKPRTAE: string;
+
+
+  getCalculoVarVtaPesos = getCalculoVarVtaPesos;
+  getCalculoVARMT = getCalculoVARMT;
+  getCalculoALCANCE = getCalculoALCANCE;
+  getCalculoCOBERTURA = getCalculoCOBERTURA;
+  getCalculoITTKPROMCN = getCalculoITTKPROMCN;
+  getCalculoITTKPROMC = getCalculoITTKPROMC;
+  getCalculoITTKPRTAEN = getCalculoITTKPRTAEN;
+  getCalculoITTKPRTAE = getCalculoITTKPRTAE
+  sumaCantidades = sumaCantidades;
+  sumaPorcentaje = sumaPorcentaje;
+  transformDateToAmerican = transformDateToAmerican;
 
   sentData;
   optionsFechas = [];
@@ -46,14 +80,14 @@ export class FlashVentasComponent implements OnInit {
 
   optionsINCDEC = [
     {value: '', label: 'Seleccione'},
-    {value: 'vsVenta1', label: 'Venta +'},
-    {value: 'vsVenta2', label: 'Venta -'},
-    {value: 'vsCuota1', label: 'Cuota +'},
-    {value: 'vsCuota2', label: 'Cuota -'},
-    {value: 'vsMix1', label: 'Venta/Cuota +'},
-    {value: 'vsMix2', label: 'Venta/Cuota -'},
-    {value: 'vsUBruta1', label: 'Utilidad Bruta +'},
-    {value: 'vsUBruta2', label: 'Utilidad Bruta -'}
+    {value: 'vsVenta-1', label: 'Venta +'},
+    {value: 'vsVenta-2', label: 'Venta -'},
+    {value: 'vsCuota-1', label: 'Cuota +'},
+    {value: 'vsCuota-2', label: 'Cuota -'},
+    {value: 'vsMix-1', label: 'Venta/Cuota +'},
+    {value: 'vsMix-2', label: 'Venta/Cuota -'},
+    {value: 'vsUBruta-1', label: 'Utilidad Bruta +'},
+    {value: 'vsUBruta-2', label: 'Utilidad Bruta -'}
   ];
 
   selectedPeriodo: string;
@@ -66,6 +100,8 @@ export class FlashVentasComponent implements OnInit {
   showSupervisor: boolean;
   showVerTiendas: boolean;
   showMargen: boolean;
+
+  showModalInfo: boolean;
 
   porMargen;
   porDia;
@@ -84,9 +120,10 @@ export class FlashVentasComponent implements OnInit {
   fechaAInstance: pgDatePickerComponent;
 
   advanceRows: Array<ObtenerVentaFlashVentasJson> = [];
+  advanceRowsBck: Array<ObtenerVentaFlashVentasJson> = [];
 
   scrollBarHorizontal = (window.innerWidth < 960);
-
+  subResizeDatatable$: Subscription;
 
 // datos tabla dummy
 
@@ -97,6 +134,10 @@ export class FlashVentasComponent implements OnInit {
 
     _pagesToggleService.togglePinnedColumn(window.innerWidth > 1025);
 
+  }
+
+  ngOnDestroy(): void {
+    this.subResizeDatatable$.unsubscribe();
   }
 
   ngOnInit() {
@@ -137,6 +178,9 @@ export class FlashVentasComponent implements OnInit {
 
     this.showVerTiendas = true;
 
+
+    this.subResizeDatatable$ = this._pagesToggleService.resizeDatatable$.subscribe(() => this.resizeDatatable());
+
   }
 
 
@@ -162,6 +206,9 @@ export class FlashVentasComponent implements OnInit {
     this.getDataMismoNivel();
   }
 
+  _startINCDECChange = () => {
+    this.getDataMismoNivel();
+  }
 
   _startValueChange = () => {
     if (this._startDate > this._endDate) {
@@ -175,7 +222,6 @@ export class FlashVentasComponent implements OnInit {
     if (this._startDate > this._endDate) {
       this._startDate = null;
     }
-
 
     this.getDataMismoNivel();
   }
@@ -213,15 +259,13 @@ export class FlashVentasComponent implements OnInit {
 
   getData(row?: ObtenerVentaFlashVentasJson) {
 
-
-    if (this.porMes || this.porDia) {
-      return;
-    }
-
     Object.assign(this.dataToSend, this.getInputData());
 
     let nombre;
+    let showModalInfo: boolean;
     const tipo = this.getTipoQuery();
+    const currentLevelInfo = this.getCurrentLevelInfo();
+
     let addBread = false;
 
 
@@ -229,19 +273,73 @@ export class FlashVentasComponent implements OnInit {
       nombre = row.NOMBRE;
       addBread = true;
 
-      if (this.porEstado) {
 
-        this.dataToSend.Nivel = 3;
-        this.dataToSend.Estado = row.NOMBRE;
-
-      } else {
-
+      if (tipo === tipoQuery.TIENDA) {
         this.dataToSend.Nivel = this.nivelBread;
-        this.dataToSend.Director = row.ID;
         this.dataToSend.Estado = '';
+        this.dataToSend.Tienda = 0;
+
+
+        if (currentLevelInfo.data.Nivel >= maxLevelTipoQuery.TIENDA) {
+          showModalInfo = true;
+          this.dataToSend.Nivel = 5; // nivel emergente;
+          this.dataToSend.Tienda = row.ID;
+        } else {
+          this.dataToSend.Director = row.ID;
+        }
+
+
+      } else if (this.porEstado) {
+
+
+        if (currentLevelInfo.data.Nivel === 1) { // primer nivel de agrupación por estado
+          this.dataToSend.Nivel = 3;
+          this.dataToSend.Estado = row.NOMBRE;
+          this.dataToSend.Tienda = 0;
+        } else if (currentLevelInfo.data.Nivel === 3) {
+          this.dataToSend.Nivel = 5;
+          this.dataToSend.Estado = '';
+          this.dataToSend.Tienda = row.ID;
+          showModalInfo = true;
+
+        }
+
+
+      } else if (this.porDia) {
+
+        this.dataToSend.Tipo = tipo;
+        this.dataToSend.Nivel = 4;
+
+
+        if (currentLevelInfo.data.Nivel === 4) { // se abre modal
+          nombre = new DatePipe('en-US').transform(row.NOMBRE, 'dd/MM/yyyy');
+          this.dataToSend.Nivel = 3;
+          this.dataToSend.Tipo = tipo;
+          this.dataToSend.FechaInicial = nombre;
+          this.dataToSend.FechaFinal = nombre;
+
+          showModalInfo = true;
+
+        }
+
+
+      } else if (this.porMes) {
+
+        this.dataToSend.Tipo = tipo;
+        this.dataToSend.Nivel = 1;
+
+
+        if (currentLevelInfo.data.Nivel === 1) { // se abre modal
+
+          this.dataToSend.Nivel = 3;
+          this.dataToSend.Tipo = tipo;
+          nombre = new DatePipe('en-US').transform(row.NOMBRE, 'dd/MM/yyyy');
+          showModalInfo = true;
+
+        }
+
 
       }
-
     }
 
     this.dataToSend.Tipo = tipo;
@@ -250,15 +348,18 @@ export class FlashVentasComponent implements OnInit {
     this._flashService.makeSoapCall(bodyReq).subscribe(
       (resp: Array<ObtenerVentaFlashVentasJson>) => {
 
-        this.calculosSummary(resp);
+        this.showModalInfo = showModalInfo;
+        this.advanceRowsBck = [...this.advanceRows];
+
+        calculaSummary(resp);
         this.advanceRows = resp;
 
         if (addBread || this.levelDrillDown.length === 0) {
           this.addLevel({...this.dataToSend}, nombre);
         }
 
-        this.setColumnsVisibility();
 
+        this.setColumnsVisibility();
       }
     );
   }
@@ -276,9 +377,12 @@ export class FlashVentasComponent implements OnInit {
       requestData.Nivel = 1;
       requestData.Tipo = this.getTipoQuery();
       /*** ***/
+
     } else if (this.porDia) {
+
       requestData.Nivel = 4;
       requestData.Tipo = this.getTipoQuery();
+
     } else if (this.porMes) {
 
       requestData.Nivel = 1;
@@ -329,11 +433,11 @@ export class FlashVentasComponent implements OnInit {
 
     Object.assign(drillInfo.data, this.getInputData());
 
-    const tipoQuery = drillInfo.data.Tipo;
+    const tipoQueryDrill = drillInfo.data.Tipo;
 
-    this.porEstado = tipoQuery === 'ESTADO';
-    this.porMes = tipoQuery === 'MES';
-    this.porDia = tipoQuery === 'DIA';
+    this.porEstado = tipoQueryDrill === tipoQuery.ESTADO;
+    this.porMes = tipoQueryDrill === tipoQuery.MES;
+    this.porDia = tipoQueryDrill === tipoQuery.DIA;
 
 
     const bodyReq = this.sentData = this._flashService.generaBodyFlashVentas(drillInfo.data);
@@ -358,14 +462,12 @@ export class FlashVentasComponent implements OnInit {
     requestData.Nivel = 3;
     requestData.Director = !Number(ID) ? 0 : ID;
 
-
     const bodyReq = this.sentData = this._flashService.generaBodyFlashVentas(requestData);
     this._flashService.makeSoapCall(bodyReq).subscribe(
       (resp: Array<ObtenerVentaFlashVentasJson>) => {
         this.advanceRows = resp;
 
         this.addLevel({...requestData}, NOMBRE);
-
         this.setColumnsVisibility();
       }
     );
@@ -384,15 +486,31 @@ export class FlashVentasComponent implements OnInit {
 
 
   getInputData() {
+
+
+    const selectedINCDEC = this.selectedINCDEC;
+    const incdec = {};
+
+    if (selectedINCDEC !== '') {
+      const [attr, value] = selectedINCDEC.split('-');
+
+      if (attr.includes('vsMix')) {
+        Object.assign(incdec, {vsCuota: value, vsVenta: value});
+      } else {
+        Object.assign(incdec, {[attr]: value});
+      }
+    }
+
     return {
       Marca: this.selectedMarca,
       FechaInicial: moment(this._startDate).format('DD/MM/YYYY'),
-      FechaFinal: moment(this._endDate).format('DD/MM/YYYY')
+      FechaFinal: moment(this._endDate).format('DD/MM/YYYY'),
+      ...incdec
     };
   }
 
   getTipoQuery() {
-    return this.porMes ? 'MES' : this.porDia ? 'DIA' : this.porEstado ? 'ESTADO' : 'TIENDA';
+    return this.porMes ? tipoQuery.MES : this.porDia ? tipoQuery.DIA : this.porEstado ? tipoQuery.ESTADO : tipoQuery.TIENDA;
   }
 
   addLevel(data: ObtenVentasFlashVentasRequestBody, nombre: string) {
@@ -405,6 +523,12 @@ export class FlashVentasComponent implements OnInit {
     this.nivelBread++;
   }
 
+  destroyLevelBread(level: number) {
+    const indexToSplice = this.levelDrillDown.findIndex(levelInfo => levelInfo.level === level);
+    this.levelDrillDown.splice(indexToSplice);
+    this.nivelBread = level;
+  }
+
   resetBread(data: ObtenVentasFlashVentasRequestBody) {
     this.levelDrillDown = [
       Object.assign({}, {
@@ -414,9 +538,14 @@ export class FlashVentasComponent implements OnInit {
     ];
 
     this.nivelBread = 2;
+    this.dataToSend.Tienda = 0;
   }
 
   goToLevel(nivel: number) {
+
+    if (this.showModalInfo) {
+      return;
+    }
 
     const dataLevel = this.levelDrillDown.find(level => level.level === nivel);
     if (nivel === 1) {
@@ -430,93 +559,6 @@ export class FlashVentasComponent implements OnInit {
   }
 
 
-  sumaCantidades(celdas: Array<number>) {
-    const suma = celdas.reduce((sum, cell) => sum += cell, 0);
-    return new DecimalPipe('en-US').transform(suma, '1.0-0');
-  }
-
-  sumaPorcentaje(celdas: Array<number>) {
-    const suma = celdas.reduce((sum, cell) => sum += cell, 0);
-    return new DecimalPipe('en-US').transform(suma, '1.2-2');
-  }
-
-  getCalculoVarVtaPesos = () => this.calculoVarVtaPesos;
-  getCalculoVARMT = () => this.calculoVARMT;
-  getCalculoALCANCE = () => this.calculoALCANCE;
-  getCalculoCOBERTURA = () => this.calculoCOBERTURA;
-  getCalculoITTKPROMCN = () => this.calculoITTKPROMCN;
-  getCalculoITTKPROMC = () => this.calculoITTKPROMC;
-  getCalculoITTKPRTAEN = () => this.calculoITTKPRTAEN;
-  getCalculoITTKPRTAE = () => this.calculoITTKPRTAE;
-
-  calculosSummary(rows: Array<ObtenerVentaFlashVentasJson>) {
-
-    let VarVtaPesos: number;
-    let VARMT: number;
-    let ALCANCE: number;
-    let COBERTURA: number;
-    let ITTKPROMCN: number;
-    let ITTKPROMC: number;
-    let ITTKPRTAEN: number;
-    let ITTKPRTAE: number;
-
-    const sumITVTMCIASN = rows.reduce((sum, cell) => sum += cell.ITVTMCIASN, 0);
-    const sumITVTMCIAS = rows.reduce((sum, cell) => sum += cell.ITVTMCIAS, 0);
-    const sumVTAMT = rows.reduce((sum, cell) => sum += cell.VTAMT, 0);
-    const sumVTAMTLY = rows.reduce((sum, cell) => sum += cell.VTAMTLY, 0);
-    const sumITPRESUP = rows.reduce((sum, cell) => sum += cell.ITPRESUP, 0);
-    const sumcuotaMensual = rows.reduce((sum, cell) => sum += cell.cuotaMensual, 0);
-    const sumITNUTKMCIN = rows.reduce((sum, cell) => sum += cell.ITNUTKMCIN, 0);
-    const sumITNUTKMCI = rows.reduce((sum, cell) => sum += cell.ITNUTKMCI, 0);
-    const sumITVTUNIMCN = rows.reduce((sum, cell) => sum += cell.ITVTUNIMCN, 0);
-    const sumITVTUNMCT = rows.reduce((sum, cell) => sum += cell.ITVTUNMCT, 0);
-
-    if (sumITVTMCIASN === 0) {
-      VarVtaPesos = 0;
-      VARMT = 0;
-    } else {
-      VarVtaPesos = ((sumITVTMCIAS / (sumITVTMCIASN - 1)) * 100) - 100;
-      VARMT = ((sumVTAMT / (sumVTAMTLY - 1)) * 100) - 100;
-    }
-
-    if (sumITPRESUP === 0) {
-      ALCANCE = 0;
-    } else {
-      ALCANCE = ((sumITVTMCIAS / (sumITPRESUP)) * 100);
-    }
-
-    if (sumcuotaMensual === 0) {
-      COBERTURA = 0;
-    } else {
-      COBERTURA = (sumITVTMCIAS / sumcuotaMensual) * 100
-    }
-
-    if(sumITNUTKMCI === 0){
-      ITTKPROMC = 0;
-      ITTKPRTAE = 0;
-    } else {
-      ITTKPROMC = sumITVTMCIAS / sumITNUTKMCI;
-      ITTKPRTAE = sumITVTUNMCT / sumITNUTKMCI;
-    }
-
-    if (sumITNUTKMCIN === 0) {
-      ITTKPROMCN = 0;
-      ITTKPRTAEN = 0;
-    } else {
-      ITTKPROMCN = sumITVTMCIASN / sumITNUTKMCIN;
-      ITTKPRTAEN = sumITVTUNIMCN / sumITNUTKMCIN;
-    }
-
-    this.calculoVarVtaPesos = new DecimalPipe('en-US').transform(VarVtaPesos, '1.2-2');
-    this.calculoVARMT = new DecimalPipe('en-US').transform(VARMT, '1.2-2');
-    this.calculoALCANCE = new DecimalPipe('en-US').transform(ALCANCE, '1.2-2');
-    this.calculoCOBERTURA = new DecimalPipe('en-US').transform(COBERTURA, '1.2-2');
-    this.calculoITTKPROMCN = new DecimalPipe('en-US').transform(ITTKPROMCN, '1.0-0');
-    this.calculoITTKPROMC = new DecimalPipe('en-US').transform(ITTKPROMC, '1.0-0');
-    this.calculoITTKPRTAEN = new DecimalPipe('en-US').transform(ITTKPRTAEN, '1.2-2');
-    this.calculoITTKPRTAE = new DecimalPipe('en-US').transform(ITTKPRTAE, '1.2-2');
-  }
-
   nullFn() {
     return '&nbsp;';
   }
@@ -524,34 +566,65 @@ export class FlashVentasComponent implements OnInit {
   setColumnsVisibility() {
 
     const {data} = this.getCurrentLevelInfo();
-    const tipoQuery = this.getTipoQuery();
+    const tipoQueryActual = this.getTipoQuery();
 
     this.showEstado = this.showDirector = this.showSupervisor =
       (this.porEstado && data.Nivel === 3) || (!this.porEstado && data.Tipo === 'TIENDA' && data.Nivel === 3);
 
-    this.showVerTiendas = (tipoQuery !== 'DIA' && tipoQuery !== 'MES') && data.Nivel !== 3 && !this.porEstado;
+    this.showVerTiendas = (tipoQueryActual !== tipoQuery.DIA && tipoQueryActual !== tipoQuery.MES) && data.Nivel !== 3 && !this.porEstado;
 
-    this.currentTipoQuery = tipoQuery;
+    this.currentTipoQuery = tipoQueryActual;
     this.showMargen = this.porMargen;
+
+
+    if (this.showModalInfo) {
+      this.summaryRow = false;
+      this.showMargen = true;
+      this.resizeDatatable();
+    }
 
 
     setTimeout(() => this.tableScroll({offsetY: 0}), 100);
 
   }
 
+  resizeDatatable() {
+    if (this.showModalInfo) {
+      this.summaryRow = false;
+      this._renderer.setStyle(this.tableContainer.nativeElement, 'height', `${window.innerHeight - 300}px`);
+      this.tableAdvance.recalculate();
+    }
+  }
+
+  exitModalInfo() {
+    this.destroyLevelBread(this.getCurrentLevelInfo().level);
+    this.showModalInfo = false;
+    this.showMargen = false;
+    this.summaryRow = true;
+    this.advanceRows = [...this.advanceRowsBck];
+    this._renderer.setStyle(this.tableContainer.nativeElement, 'height', '500px');
+    this.setColumnsVisibility();
+    this.tableAdvance.recalculate();
+  }
 
   tableScroll(event) {
 
-    const {offsetY} = event;
-    const totalH = (this.advanceRows.length * this.rowHeight); // altura Total;
+    if (!this.showModalInfo) {
+      const {offsetY} = event;
+      const totalH = (this.advanceRows.length * this.rowHeight); // altura Total;
 
-    const element = document.querySelector('datatable-summary-row');
-    let h = 330 + offsetY;
-    if (h + this.summaryHeight >= totalH && h <= totalH) {
-      h += 5;
+      const element = document.querySelector('datatable-summary-row');
+      let h = 330 + offsetY;
+      if (h + this.summaryHeight >= totalH && h <= totalH) {
+        h += 5;
+      }
+
+      try {
+        this._renderer.setStyle(element, 'transform', 'translate3d(0px,' + h + 'px, 0px)');
+      } catch (e) {
+        // aun no se renderea el summary
+      }
     }
-
-    this._renderer.setStyle(element, 'transform', 'translate3d(0px,' + h + 'px, 0px)');
   }
 
 }
