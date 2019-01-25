@@ -624,7 +624,7 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
     if (!this.showModalInfo) {
       const {offsetY} = event;
       const totalH = (this.advanceRows.length * this.rowHeight); // altura Total;
-      const totalAllowed = totalH + this.summaryHeight;
+      const totalAllowed = totalH; //+ this.summaryHeight;
 
       const element = document.querySelector('datatable-summary-row');
       let h = 330 + offsetY;
@@ -633,6 +633,8 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
       }
 
       h = h > totalAllowed ? totalAllowed : h;
+
+      console.log(h);
 
       try {
         this._renderer.setStyle(element, 'transform', 'translate3d(0px,' + h + 'px, 0px)');
