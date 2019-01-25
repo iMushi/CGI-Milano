@@ -485,7 +485,7 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
 
     this.dataToSend = new ObtenVentasFlashRequest({
       Marca: this.selectedMarca,
-      FechaInicial: moment(this._startDate).format('DD/MM/YYYY'),
+      FechaInicial: this.getFechaUltimoAnio(),
       FechaFinal: moment(this._endDate).format('DD/MM/YYYY')
     });
   }
@@ -510,7 +510,7 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
     return {
       Tienda: !!this.filterTienda || 0,
       Marca: this.selectedMarca,
-      FechaInicial: moment(this._startDate).format('DD/MM/YYYY'),
+      FechaInicial: this.getFechaUltimoAnio(),
       FechaFinal: moment(this._endDate).format('DD/MM/YYYY'),
       ...incdec
     };
@@ -680,6 +680,14 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
         console.log('resp =)>', resp);
       }
     );
+  }
+
+  getFechaUltimoAnio() {
+    if (this.porMes) {
+      return moment(new Date()).subtract(11, 'months').format('DD/MM/YYYY');
+    } else {
+      return moment(this._startDate).format('DD/MM/YYYY');
+    }
   }
 
 }
