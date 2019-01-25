@@ -130,7 +130,9 @@ $assets-url: "../../assets" !global;
   }
 }
 
-
+.headerPurple, .headerYellow, .headerGreen, .headerTerracota, .headerAzul, .headerYellowPiezas{
+  padding: 0px!important;
+}
 
 .headerPurple{
   color: white !important;
@@ -166,12 +168,17 @@ $assets-url: "../../assets" !global;
 
 .headerNormal {
   position: relative;
-  top: 10px;
+  top: 20px;
   height: 50px;
+  white-space: normal;
+  line-height: 10px;
+  width: 75px;
+  text-align: center;
+
 }
 
 .ngx-datatable .datatable-header .datatable-header-cell.sortable .sort-btn{
-  top: 10px !important;
+  top: 20px !important;
 }
 
 .headerSuperior{
@@ -183,24 +190,79 @@ $assets-url: "../../assets" !global;
 }
 
 
+.cellShowTienda {
+  height: 25px;
+  padding: 7px;
+  text-align: center
+}
+
+
 .cellClass {
-  padding-top: 0px !important;
-  margin-top: auto !important;
-  height: auto !important;
-  white-space: normal !important;
-  display: table !important;
-  /* margin-bottom: auto; */
-  /* height: 50px; */
+  display: flex !important;
+  justify-content: center ;
+  padding: 0px !important;
+  flex-direction: column;
+  height: 30px;
+}
+
+
+datatable-summary-row>datatable-body-row>div>datatable-body-cell {
+  height: 50px!important;
+}
+
+.cellIdClass{
+  padding: 0px!important;
+  text-align: center;
+}
+
+.idColorMartes {
+  background-color: #FCF2D1;
+}
+
+.idColorMiércoles {
+  background-color: #E5F1F4;
+}
+
+.idColorJueves{
+  background-color: #F5DDCD;
+}
+
+.idColorViernes {
+  background-color: #D6F5E3;
+}
+
+.idColorSábado {
+  background-color: #FFFFFF;
+}
+
+.idColorDomingo {
+  background-color: #D7EAF7;
+}
+
+idColorLunes {
+  background-color: #FFFFFF;
 }
 
 
 .cellText {
   display: table-cell !important;
   vertical-align: middle !important;
-  height: 50px;
-  /*
-  font-size: 11px !important;
-   */
+  height: 30px;
+}
+
+.cellIdText {
+  display: flex;
+  justify-content: space-around;
+  padding: 7px;
+}
+
+
+.cellNumber {
+  display: table-cell !important;
+  vertical-align: middle !important;
+  height: 30px;
+  width: 100px;
+  text-align: right;
 }
 
 datatable-summary-row,
@@ -210,6 +272,19 @@ datatable-summary-row > datatable-body-row > div > datatable-body-cell{
   background-color: #83909A !important;
   color: white;
   font-weight: bold;
+}
+
+datatable-summary-row > datatable-body-row > div > datatable-body-cell > .datatable-body-cell-label{
+  text-align: right;
+}
+
+
+datatable-row-wrapper > datatable-body-row > div> datatable-body-cell {
+  padding: 5px!important;
+}
+
+.ngx-datatable .datatable-body .datatable-body-row .datatable-body-cell{
+  font-size: 11px;
 }
 
 
@@ -223,6 +298,18 @@ datatable-summary-row > datatable-body-row > div > datatable-body-cell{
   text-shadow: #A4A4A4 0.1em 0.1em 0.2em;
 }
 
+.noPaddingTop {
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+.noMinHeight {
+  min-height: 0px !important;
+}
+
+.noMarginBottom {
+  margin-bottom: 0px !important;
+}
 
 pg-breadcrumb{
   display: block !important;

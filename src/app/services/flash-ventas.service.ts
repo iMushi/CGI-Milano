@@ -74,4 +74,28 @@ export class FlashVentasService {
 </Envelope>`;
 
   }
+
+  downloadFile() {
+
+
+    return this.http.post('/assets/data/testExcel', {});
+
+
+    /*
+    this.service.postAndGetResponse('/assets/data/testExcel').subscribe(response => {
+      var fileName = 'nameForFile' + '.extension';
+      if (window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveOrOpenBlob(response, fileName);
+      } else {
+        var link = document.createElement('a');
+        link.setAttribute('type', 'hidden');
+        link.download = fileName;
+        link.href = window.URL.createObjectURL(response);
+        document.body.appendChild(link);
+        link.click();
+      }
+    });
+    */
+  }
+
 }

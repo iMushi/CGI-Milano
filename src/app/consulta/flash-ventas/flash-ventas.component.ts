@@ -19,7 +19,9 @@ import {
   getCalculoITTKPRTAEN,
   getCalculoVARMT,
   getCalculoVarVtaPesos,
+  getIdColumnClass,
   maxLevelTipoQuery,
+  optionsMarcas,
   sumaCantidades,
   sumaPorcentaje,
   tipoQuery,
@@ -41,9 +43,11 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
   isMobileTest = environment.mobileTest;
   dataToSend: ObtenVentasFlashVentasRequestBody;
 
-  rowHeight = 50;
+  rowHeight = 30;
   summaryHeight = 50;
   summaryRow = true;
+  lastScannedOffsetY: number;
+
 
   calculoVarVtaPesos: string;
   calculoVARMT: string;
@@ -66,16 +70,13 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
   sumaCantidades = sumaCantidades;
   sumaPorcentaje = sumaPorcentaje;
   transformDateToAmerican = transformDateToAmerican;
+  getIdColumnClass = getIdColumnClass;
+
+  optionsMarcas = optionsMarcas;
+
 
   sentData;
   optionsFechas = [];
-
-  optionsMarcas = [
-    {value: 0, label: 'TODAS'},
-    {value: 10, label: 'MELODY'},
-    {value: 30, label: 'MILANO'},
-    {value: 60, label: 'HOME & FASHION'}
-  ];
 
 
   optionsINCDEC = [
@@ -103,6 +104,7 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
 
   showModalInfo: boolean;
 
+  filterTienda;
   porMargen;
   porDia;
   porMes;
@@ -159,6 +161,7 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
 
     this.selectedPeriodo = dateEnd.format('MM/YYYY');
 
+
     this._startDate = moment().startOf('month').toDate();
     this._endDate = moment().subtract(1, 'day').toDate();
 
@@ -186,20 +189,23 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
 
   _startValuePeriodoChange = () => {
 
-    const currentDate = moment(new Date());
-    const [mesSeleccionado, anioSeleccionado] = this.selectedPeriodo.split('/');
-    const selectedPeriodo = moment(`${mesSeleccionado}-01-${anioSeleccionado}`, 'MM-DD-YYYY');
+    try {
+      const currentDate = moment(new Date());
+      const [mesSeleccionado, anioSeleccionado] = this.selectedPeriodo.split('/');
+      const selectedPeriodo = moment(`${mesSeleccionado}-01-${anioSeleccionado}`, 'MM-DD-YYYY');
 
-    this._startDate = selectedPeriodo.toDate();
+      this._startDate = selectedPeriodo.toDate();
 
-    if (selectedPeriodo.get('month') === currentDate.get('month')) {
-      this._endDate = moment().subtract(1, 'day').toDate();
-    } else {
-      this._endDate = selectedPeriodo.endOf('month').toDate();
+      if (selectedPeriodo.get('month') === currentDate.get('month')) {
+        this._endDate = moment().subtract(1, 'day').toDate();
+      } else {
+        this._endDate = selectedPeriodo.endOf('month').toDate();
+      }
+
+      this.getDataMismoNivel();
+    } catch (e) {
+
     }
-
-    this.getDataMismoNivel();
-
   }
 
   _startMarcaChange = () => {
@@ -502,6 +508,7 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
     }
 
     return {
+      Tienda: !!this.filterTienda || 0,
       Marca: this.selectedMarca,
       FechaInicial: moment(this._startDate).format('DD/MM/YYYY'),
       FechaFinal: moment(this._endDate).format('DD/MM/YYYY'),
@@ -525,8 +532,13 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
 
   destroyLevelBread(level: number) {
     const indexToSplice = this.levelDrillDown.findIndex(levelInfo => levelInfo.level === level);
-    this.levelDrillDown.splice(indexToSplice);
-    this.nivelBread = level;
+
+    if (indexToSplice !== -1) {
+      this.levelDrillDown.splice(indexToSplice);
+      this.nivelBread = level;
+    }
+
+
   }
 
   resetBread(data: ObtenVentasFlashVentasRequestBody) {
@@ -584,7 +596,7 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
     }
 
 
-    setTimeout(() => this.tableScroll({offsetY: 0}), 100);
+    setTimeout(() => this.tableScroll({offsetY: this.lastScannedOffsetY || 0}), 100);
 
   }
 
@@ -612,6 +624,7 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
     if (!this.showModalInfo) {
       const {offsetY} = event;
       const totalH = (this.advanceRows.length * this.rowHeight); // altura Total;
+      const totalAllowed = totalH + this.summaryHeight;
 
       const element = document.querySelector('datatable-summary-row');
       let h = 330 + offsetY;
@@ -619,12 +632,52 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
         h += 5;
       }
 
+      h = h > totalAllowed ? totalAllowed : h;
+
       try {
         this._renderer.setStyle(element, 'transform', 'translate3d(0px,' + h + 'px, 0px)');
+        this.lastScannedOffsetY = offsetY;
       } catch (e) {
         // aun no se renderea el summary
       }
     }
+  }
+
+  searchTienda() {
+
+    if (this.filterTienda && this.filterTienda !== '') {
+
+      this.destroyLevelBread(2);
+
+      this.porEstado = false;
+      this.porDia = false;
+      this.porMes = false;
+      this.selectedMarca = 0;
+      this.updateDataModel();
+
+      const requestData = {...this.dataToSend};
+
+      requestData.Tienda = this.filterTienda;
+      requestData.Nivel = 3;
+
+      const bodyReq = this.sentData = this._flashService.generaBodyFlashVentas(requestData);
+      this._flashService.makeSoapCall(bodyReq).subscribe(
+        (resp: Array<ObtenerVentaFlashVentasJson>) => {
+          this.advanceRows = resp;
+          this.addLevel({...requestData}, 'Tienda');
+          this.setColumnsVisibility();
+        }
+      );
+
+    }
+  }
+
+  descargaExcel() {
+    this._flashService.downloadFile().subscribe(
+      resp => {
+        console.log('resp =)>', resp);
+      }
+    );
   }
 
 }

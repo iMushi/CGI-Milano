@@ -6,17 +6,27 @@ export const enum tipoQuery {
   'MES' = 'MES',
   'ESTADO' = 'ESTADO',
   'TIENDA' = 'TIENDA'
-};
+}
 
 export const enum maxLevelTipoQuery {
   'DIA' = 1,
   'MES' = 1,
   'ESTADO' = 1,
   'TIENDA' = 3
-};
+}
 
+export const optionsMarcas = [
+  {value: 0, label: 'TODAS'},
+  {value: 10, label: 'MELODY'},
+  {value: 30, label: 'MILANO'},
+  {value: 60, label: 'HOME & FASHION'},
+  {value: 70, label: 'TOKYO'}
+];
 
-export function calculaSummary(rows: Array<ObtenerVentaFlashVentasJson>){
+export function getIdColumnClass(value: string) {
+  return `idColor${value}`;
+}
+export function calculaSummary(rows: Array<ObtenerVentaFlashVentasJson>) {
 
 
   let VarVtaPesos: number;
@@ -98,14 +108,14 @@ export const getCalculoITTKPRTAE = () => this.calculoITTKPRTAE;
 export const sumaCantidades = (celdas: Array<number>) => {
   const suma = celdas.reduce((sum, cell) => sum += cell, 0);
   return new DecimalPipe('en-US').transform(suma, '1.0-0');
-}
+};
 
 export const sumaPorcentaje = (celdas: Array<number>) => {
   const suma = celdas.reduce((sum, cell) => sum += cell, 0);
   return new DecimalPipe('en-US').transform(suma, '1.2-2');
-}
+};
 
 export const transformDateToAmerican = (dateStr: string) => {
   const [dia, mes, anio] = dateStr.split('/');
   return `${mes}/${dia}/${anio}`;
-}
+};
