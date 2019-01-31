@@ -29,6 +29,7 @@ import {
 } from './classes/flashVentasCommon';
 import { Subscription } from 'rxjs/Subscription';
 import { DatePipe } from '@angular/common';
+import { DatatableComponent } from '@swimlane/ngx-datatable';
 
 @Component({
   selector: 'app-flash-ventas',
@@ -37,7 +38,7 @@ import { DatePipe } from '@angular/common';
 })
 export class FlashVentasComponent implements OnInit, OnDestroy {
 
-  @ViewChild('tableAdvance') tableAdvance: any;
+  @ViewChild('tableAdvance') tableAdvance: DatatableComponent;
   @ViewChild('tableContainer') tableContainer: ElementRef;
 
   isMobileTest = environment.mobileTest;
@@ -66,18 +67,15 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
   getCalculoITTKPROMCN = getCalculoITTKPROMCN;
   getCalculoITTKPROMC = getCalculoITTKPROMC;
   getCalculoITTKPRTAEN = getCalculoITTKPRTAEN;
-  getCalculoITTKPRTAE = getCalculoITTKPRTAE
+  getCalculoITTKPRTAE = getCalculoITTKPRTAE;
   sumaCantidades = sumaCantidades;
   sumaPorcentaje = sumaPorcentaje;
   transformDateToAmerican = transformDateToAmerican;
   getIdColumnClass = getIdColumnClass;
 
   optionsMarcas = optionsMarcas;
-
-
   sentData;
   optionsFechas = [];
-
 
   optionsINCDEC = [
     {value: '', label: 'Seleccione'},
@@ -114,7 +112,6 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
 
   levelDrillDown: Array<LevelDrillDownModel> = [];
 
-  // Rango de fechas
   _startDate = null;
   _endDate = null;
 
@@ -127,10 +124,10 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
   scrollBarHorizontal = (window.innerWidth < 960);
   subResizeDatatable$: Subscription;
 
-// datos tabla dummy
 
-
-  constructor(private _flashService: FlashVentasService, public _pagesToggleService: pagesToggleService, private _renderer: Renderer2) {
+  constructor(private _flashService: FlashVentasService
+    , public _pagesToggleService: pagesToggleService
+    , private _renderer: Renderer2) {
 
     moment.locale('es');
 
@@ -524,8 +521,9 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
 
     this.levelDrillDown.push(Object.assign({}, {
       level: this.nivelBread,
-      nombre: nombre
-    }, {data}));
+      nombre,
+      data
+    }));
 
     this.nivelBread++;
   }
@@ -580,8 +578,10 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
     const {data} = this.getCurrentLevelInfo();
     const tipoQueryActual = this.getTipoQuery();
 
+    this.tableAdvance.sorts = [];
+
     this.showEstado = this.showDirector = this.showSupervisor =
-      (this.porEstado && data.Nivel === 3) || (!this.porEstado && data.Tipo === 'TIENDA' && data.Nivel === 3);
+      (this.porEstado && data.Nivel === 3) || (!this.porEstado && data.Tipo === tipoQuery.TIENDA && data.Nivel === 3);
 
     this.showVerTiendas = (tipoQueryActual !== tipoQuery.DIA && tipoQueryActual !== tipoQuery.MES) && data.Nivel !== 3 && !this.porEstado;
 
@@ -627,22 +627,23 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
       const totalAllowed = totalH; //+ this.summaryHeight;
 
       const element = document.querySelector('datatable-summary-row');
-      let h = 330 + offsetY;
-      if (h + this.summaryHeight >= totalH && h <= totalH) {
-        h += 5;
+      let heightToSet = 330 + offsetY;
+
+      if (heightToSet + this.summaryHeight >= totalH && heightToSet <= totalH) {
+        heightToSet += 5;
       }
 
-      h = h > totalAllowed ? totalAllowed : h;
+      heightToSet = heightToSet > totalAllowed ? totalAllowed : heightToSet;
 
-      console.log(h);
 
       try {
-        this._renderer.setStyle(element, 'transform', 'translate3d(0px,' + h + 'px, 0px)');
+        this._renderer.setStyle(element, 'transform', 'translate3d(0px,' + heightToSet + 'px, 0px)');
         this.lastScannedOffsetY = offsetY;
       } catch (e) {
         // aun no se renderea el summary
       }
     }
+
   }
 
   searchTienda() {
@@ -675,16 +676,12 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
   }
 
   descargaExcel() {
-    this._flashService.downloadFile().subscribe(
-      resp => {
-        console.log('resp =)>', resp);
-      }
-    );
+    this._flashService.downloadFile().subscribe(() => {});
   }
 
   getFechaUltimoAnio() {
     if (this.porMes) {
-      return moment(new Date()).subtract(11, 'months').format('DD/MM/YYYY');
+      return moment(new Date()).subtract(11, 'months').startOf('month').format('DD/MM/YYYY');
     } else {
       return moment(this._startDate).format('DD/MM/YYYY');
     }

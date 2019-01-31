@@ -183,7 +183,7 @@
           </li>
           <ng-template #finalBread>
             <li class="breadcrumb-item active">{{ i === 0 ? 'HOME' : info.nombre }}</li>
-            <li *ngIf="showModalInfo" class="breadcrumb-item linkSelectTable" (click)="$event.preventDefault(); $event.stopPropagation(); exitModalInfo(row)">Cerrar
+            <li *ngIf="showModalInfo" class="breadcrumb-item linkSelectTable" (click)="$event.preventDefault(); $event.stopPropagation(); exitModalInfo();">Cerrar
               <i class="fa fa-close" aria-hidden="true"></i>
             </li>
           </ng-template>
@@ -301,7 +301,7 @@
           </ngx-datatable-column>
 
 
-          <ngx-datatable-column [draggable]="false" [resizeable]="false" prop="estado" name="Estado" [sortable]='true'
+          <ngx-datatable-column [draggable]="false" [resizeable]="false" [width]="85" prop="estado" name="Estado" [sortable]='true'
                                 [frozenLeft]="_pagesToggleService.pinnedColumnsToggle | async"
                                 headerClass="headerPurple"
                                 cellClass="cellClass" *ngIf="showEstado && !showModalInfo"

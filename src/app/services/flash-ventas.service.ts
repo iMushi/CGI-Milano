@@ -78,24 +78,55 @@ export class FlashVentasService {
   downloadFile() {
 
 
-    return this.http.post('/assets/data/testExcel', {});
+    const body = `<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Body>
+        <ObtenVentaFlashVentasExcel xmlns="http://tempuri.org/"/>
+    </Body>
+</Envelope>`;
+
+    const headers = new HttpHeaders().
+      set('Content-Type', 'text/xml').
+      append('SOAPAction', 'http://tempuri.org/IWsCGI/ObtenVentaFlashVentasExcel');
+
+    return this.http.post('http://pruebas-mm.milano-melody.net/WSCGI/WsCGI.WsCGI.svc', body, {
+      headers,
+      responseType: 'text'
+    }).map(resp => {
 
 
-    /*
-    this.service.postAndGetResponse('/assets/data/testExcel').subscribe(response => {
-      var fileName = 'nameForFile' + '.extension';
+      const parser = new DOMParser();
+      const xmlResponse: Document = parser.parseFromString(resp, 'text/xml');
+
+      const response = xmlResponse.getElementsByTagName('ObtenVentaFlashVentasExcelResult').item(0).textContent;
+
+
       if (window.navigator.msSaveOrOpenBlob) {
-        window.navigator.msSaveOrOpenBlob(response, fileName);
+        window.navigator.msSaveOrOpenBlob(response, 'excel.xlsx');
       } else {
-        var link = document.createElement('a');
+        const link = document.createElement('a');
+        const blob = new Blob([this.s2ab(atob(response))], {type: ''});
+
         link.setAttribute('type', 'hidden');
-        link.download = fileName;
-        link.href = window.URL.createObjectURL(response);
+        link.download = 'excel.xlsx';
+        link.href = window.URL.createObjectURL(blob);
         document.body.appendChild(link);
         link.click();
+
+
+
       }
+
+
     });
-    */
+
+
+  }
+
+   s2ab(s) {
+    let buf = new ArrayBuffer(s.length);
+    let view = new Uint8Array(buf);
+    for (let i=0; i !=s.length; ++i) view[i] = s.charCodeAt(i) & 0xFF;
+    return buf;
   }
 
 }

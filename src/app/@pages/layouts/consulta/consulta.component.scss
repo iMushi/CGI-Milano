@@ -172,7 +172,7 @@ $assets-url: "../../assets" !global;
   height: 50px;
   white-space: normal;
   line-height: 10px;
-  width: 80px;
+  width: 77px;
   text-align: center;
 
 }
@@ -208,6 +208,10 @@ $assets-url: "../../assets" !global;
 
 datatable-summary-row>datatable-body-row>div>datatable-body-cell {
   height: 50px!important;
+}
+
+datatable-body-row:hover {
+ background-color: black;
 }
 
 .cellIdClass{

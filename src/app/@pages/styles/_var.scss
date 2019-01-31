@@ -20,9 +20,9 @@ $color-master-lighter:mix($color-master, #fff, 9.5%) ;
 $color-master-lightest:mix($color-master, #fff, 3%) ;
 
 // Darker Grey colors
-$color-master-dark:mix($color-master, #000, 45%) ;
-$color-master-darker:mix($color-master, #000, 27%) ;
-$color-master-darkest:mix($color-master, #000, 18%) ;
+$color-master-dark: white; // mix($color-master, #000, 45%) ;
+$color-master-darker:white; // mix($color-master, #000, 27%) ;
+$color-master-darkest:white; // mix($color-master, #000, 18%) ;
 
 $color-white: #fff ;
 $color-black: #000 ;
