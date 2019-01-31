@@ -8,6 +8,7 @@ import { ConsultaRoutes } from './consulta.routing';
 import { pgSelectModule } from '../@pages/components/select/select.module';
 import { pgDatePickerModule } from '../@pages/components/datepicker/datepicker.module';
 import { NgxDatatableModule } from '@swimlane/ngx-datatable';
+import { ConsultaDrillDownComponent } from './consulta-drill-down/consulta-drill-down.component';
 
 @NgModule({
   imports: [
@@ -20,7 +21,7 @@ import { NgxDatatableModule } from '@swimlane/ngx-datatable';
     pgDatePickerModule,
     NgxDatatableModule
   ],
-  declarations: [FlashVentasComponent]
+  declarations: [FlashVentasComponent, ConsultaDrillDownComponent]
 })
 export class ConsultaModule {
 }
