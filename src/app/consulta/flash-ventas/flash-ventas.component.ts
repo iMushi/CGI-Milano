@@ -505,7 +505,7 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
     }
 
     return {
-      Tienda: !!this.filterTienda || 0,
+      Tienda: this.filterTienda || 0,
       Marca: this.selectedMarca,
       FechaInicial: this.getFechaUltimoAnio(),
       FechaFinal: moment(this._endDate).format('DD/MM/YYYY'),
@@ -676,7 +676,8 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
   }
 
   descargaExcel() {
-    this._flashService.downloadFile().subscribe(() => {});
+    this._flashService.downloadFile().subscribe(() => {
+    });
   }
 
   getFechaUltimoAnio() {

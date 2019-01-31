@@ -5,5 +5,6 @@
 
 export const environment = {
   production: false,
-  mobileTest: false
+  mobileTest: false,
+  createFakeCookie: true
 };
