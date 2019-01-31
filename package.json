@@ -39,6 +39,7 @@
     "moment": "^2.18.1",
     "ng-scrollreveal": "^2.2.0",
     "ngx-bootstrap": "^2.0.5",
+    "ngx-cookie-service": "^2.1.0",
     "ngx-echarts": "^2.1.0",
     "ngx-filter-pipe": "^2.0.0",
     "ngx-isotope": "^0.1.7",
