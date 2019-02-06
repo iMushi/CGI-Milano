@@ -10,7 +10,8 @@
       "assets": [
         "assets",
         "favicon.ico",
-        "milano.ico"
+        "milano.ico",
+        "web.config"
       ],
       "index": "index.html",
       "main": "main.ts",

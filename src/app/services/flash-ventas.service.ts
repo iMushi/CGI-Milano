@@ -16,7 +16,7 @@ export class FlashVentasService {
       set('Content-Type', 'text/xml').
       append('SOAPAction', 'http://tempuri.org/IWsCGI/ObtenVentaFlashVentasJson');
 
-    return this.http.post('http://pruebas-mm.milano-melody.net/WSCGI/WsCGI.WsCGI.svc', body, {
+    return this.http.post('http://pruebas-mm.milano-melody.net:9107/WsCGI.WsCGI.svc', body, {
       headers,
       responseType: 'text'
     }).map(resp => {

@@ -20,20 +20,22 @@ export class AuthService {
 
     if (environment.createFakeCookie) {
       const expirationDate = moment(new Date()).add(1, 'minute').toDate();
-      this._cookieService.set('cgiAuthCookie', 'allowAcces:true', expirationDate, '/consulta/consulta-drill-down');
-      this._cookieService.set('cgiAuthCookie', 'allowAcces:true', expirationDate, '/consulta/flash-ventas');
+      this._cookieService.set('cgiAuthCookie', 'allowAcces:true', expirationDate, '/');
+      this._cookieService.set('cgiAuthCookie', 'allowAcces:true', expirationDate, '/');
     }
 
 
-    this.loggedIn.next(this.checkCookieValidity());
     this.checkSession.takeUntil(this.stopTaking).subscribe(() => {
-      this.loggedIn.next(this.checkCookieValidity());
+      this.checkCookieValidity();
     });
+
+
+    this.checkCookieValidity();
 
   }
 
 
-  checkCookieValidity(): boolean {
+  checkCookieValidity() {
 
     console.log('entrando');
 
@@ -43,12 +45,10 @@ export class AuthService {
         this.loggedIn.next(true);
       }
 
-      return true;
     } else {
       console.log('no cookie or cookie invalid ===>');
       this.loggedIn.next(false);
       this.stopTaking.next();
-      return false;
     }
 
   }
