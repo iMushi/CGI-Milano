@@ -29,7 +29,7 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
   isMobileTest = environment.mobileTest;
   dataToSend: ObtenVentasFlashVentasRequestBody;
 
-  authInfo:AuthModel;
+  authInfo: AuthModel;
 
   rowHeight = 30;
   summaryHeight = 50;
@@ -469,6 +469,10 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
 
     const selectedINCDEC = this.selectedINCDEC;
     const incdec = {};
+    const vsCuota = 0;
+    const vsVenta = 0;
+    const vsUBruta = 0;
+
 
     if (selectedINCDEC !== '') {
       const [attr, value] = selectedINCDEC.split('-');
@@ -478,6 +482,8 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
       } else {
         Object.assign(incdec, {[attr]: value});
       }
+    } else {
+      Object.assign(incdec, {vsCuota, vsVenta, vsUBruta});
     }
 
     return {
