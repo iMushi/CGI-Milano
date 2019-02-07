@@ -9,16 +9,12 @@ import { environment } from '../../../environments/environment';
 import { ObtenVentasFlashVentasRequestBody } from '../../../models/requestBody/ObtenVentasFlashVentasRequestBody ';
 import { LevelDrillDownModel } from '../../../models/levelDrillDown.model';
 import { pagesToggleService } from '../../@pages/services/toggler.service';
-import {
-
-  getIdColumnClass,
-  maxLevelTipoQuery,
-  optionsMarcas,
-  tipoQuery
-} from './classes/flashVentasCommon';
+import { getIdColumnClass, maxLevelTipoQuery, optionsMarcas, tipoQuery } from './classes/flashVentasCommon';
 import { Subscription } from 'rxjs/Subscription';
 import { DatePipe, DecimalPipe } from '@angular/common';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
+import { AuthService } from '../../services/auth.service';
+import { AuthModel } from '../../../models/auth.model';
 
 @Component({
   selector: 'app-flash-ventas',
@@ -32,6 +28,8 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
 
   isMobileTest = environment.mobileTest;
   dataToSend: ObtenVentasFlashVentasRequestBody;
+
+  authInfo:AuthModel;
 
   rowHeight = 30;
   summaryHeight = 50;
@@ -104,11 +102,12 @@ export class FlashVentasComponent implements OnInit, OnDestroy {
 
   constructor(private _flashService: FlashVentasService
     , public _pagesToggleService: pagesToggleService
-    , private _renderer: Renderer2) {
+    , private _renderer: Renderer2, private _authService: AuthService) {
 
     moment.locale('es');
 
     _pagesToggleService.togglePinnedColumn(window.innerWidth > 1025);
+    Object.assign(this, {authInfo: this._authService.getLoggedInInfo()});
 
   }
 
