@@ -53,7 +53,6 @@ export class AuthService {
       }
     } catch (e) {
       console.log('Error al procesar Cookie Auth =>', e);
-    } finally {
       this.isLoggedIn.next(false);
       this.authInfo.next(null);
       this.stopTaking.next();
